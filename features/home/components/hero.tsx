@@ -4,10 +4,17 @@ import { motion } from "framer-motion";
 import { PageContainer } from "@/components/common/page-container";
 import { Section } from "@/components/common/section";
 import { motion as motionPreset } from "@/config/motion";
+import { BackgroundGradient } from "@/components/common/background-gradient";
+import { FloatingLeaf } from "@/components/animation/floating-leaf";
 
 export function Hero() {
   return (
     <Section className="relative overflow-hidden">
+      <BackgroundGradient />
+
+      <FloatingLeaf className="absolute left-20 top-40 text-4xl opacity-40" />
+
+      <FloatingLeaf className="absolute right-20 top-60 text-5xl opacity-30" />
 
       <PageContainer>
 
