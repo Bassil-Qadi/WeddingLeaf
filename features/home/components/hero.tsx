@@ -6,6 +6,8 @@ import { Section } from "@/components/common/section";
 import { motion as motionPreset } from "@/config/motion";
 import { BackgroundGradient } from "@/components/common/background-gradient";
 import { FloatingLeaf } from "@/components/animation/floating-leaf";
+import { Button } from "@/components/ui/button";
+import { InvitationPreview } from "./invitation-preview";
 
 export function Hero() {
   return (
@@ -18,7 +20,15 @@ export function Hero() {
 
       <PageContainer>
 
-        <div className="mx-auto max-w-4xl py-24 text-center">
+        <div className="
+mx-auto
+flex
+min-h-[90vh]
+max-w-4xl
+flex-col
+justify-center
+text-center
+">
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -56,15 +66,18 @@ export function Hero() {
             transition={motionPreset.cinematic}
             className="mt-12 flex justify-center gap-5"
           >
-            <button className="rounded-full bg-primary px-8 py-4 text-primary-foreground">
+            <Button size="lg">
               ابدأ الآن
-            </button>
+            </Button>
 
-            <button className="rounded-full border px-8 py-4">
+            <Button
+              variant="outline"
+              size="lg"
+            >
               مشاهدة العرض
-            </button>
+            </Button>
           </motion.div>
-
+          <InvitationPreview />
         </div>
 
       </PageContainer>

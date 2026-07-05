@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageContainer } from "@/components/common/page-container";
+import { Leaf } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -12,7 +13,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-3">
 
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground text-xl">
-              🌿
+            <Leaf className="h-6 w-6"/>
             </div>
 
             <div>
