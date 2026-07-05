@@ -7,7 +7,6 @@ import { motion as motionPreset } from "@/config/motion";
 import { BackgroundGradient } from "@/components/common/background-gradient";
 import { FloatingLeaf } from "@/components/animation/floating-leaf";
 import { Button } from "@/components/ui/button";
-import { InvitationExperience } from "@/features/invitations/components/experience/invitation-experience";
 
 export function Hero() {
   return (
@@ -77,7 +76,6 @@ text-center
               مشاهدة العرض
             </Button>
           </motion.div>
-          <InvitationExperience />
         </div>
 
       </PageContainer>
