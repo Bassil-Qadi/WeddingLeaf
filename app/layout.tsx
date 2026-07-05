@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Providers from "@/providers";
 import { arabic, amiri, geist } from "@/config/fonts";
 import "./globals.css";
 
@@ -25,7 +26,11 @@ export default function RootLayout({
     antialiased
   `}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+      <Providers>
+        {children}
+    </Providers>
+      </body>
     </html>
   );
 }
