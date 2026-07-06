@@ -31,7 +31,7 @@ export function SealButton({ monogram, isOpening, onTap }: SealButtonProps) {
         }
         transition={
           isOpening
-            ? { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+            ? { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
             : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
         }
       />
@@ -41,7 +41,7 @@ export function SealButton({ monogram, isOpening, onTap }: SealButtonProps) {
         animate={
           isOpening ? { scale: 0.7, opacity: 0 } : { scale: 1, opacity: 1 }
         }
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
         <span className="font-heading text-lg text-primary-foreground">
           {monogram}

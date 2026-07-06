@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 
-import { CoverScreen } from "./cover-screen";
+import { DoorHalf } from "./door-half";
+import { SealButton } from "./seal-button";
 import { InvitationCard } from "./invitation-card";
 import type { Invitation } from "@/types/invitation";
 
@@ -18,7 +19,7 @@ export function InvitationExperience({ invitation }: InvitationExperienceProps) 
 
   useEffect(() => {
     if (stage === "opening") {
-      const timer = setTimeout(() => setStage("open"), 500);
+      const timer = setTimeout(() => setStage("open"), 850);
       return () => clearTimeout(timer);
     }
   }, [stage]);
@@ -33,24 +34,32 @@ export function InvitationExperience({ invitation }: InvitationExperienceProps) 
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const monogram = `${invitation.groomName.charAt(0)} ${invitation.brideName.charAt(0)}`;
+
   return (
     <section className="relative h-dvh w-full overflow-hidden bg-background">
-      <AnimatePresence>
-        {stage !== "open" && (
-          <CoverScreen
-            key="cover"
-            invitation={invitation}
-            isOpening={stage === "opening"}
-            onOpen={handleOpen}
-          />
-        )}
-      </AnimatePresence>
-
       <AnimatePresence>
         {stage === "open" && (
           <InvitationCard invitation={invitation} onContinue={handleContinue} />
         )}
       </AnimatePresence>
+
+      {stage !== "open" && (
+        <>
+          <div className="absolute inset-0 z-10" style={{ perspective: 2000 }}>
+            <DoorHalf side="left" isOpening={stage === "opening"} />
+            <DoorHalf side="right" isOpening={stage === "opening"} />
+          </div>
+
+          <div className="absolute inset-0 z-20 flex items-center justify-center">
+            <SealButton
+              monogram={monogram}
+              isOpening={stage === "opening"}
+              onTap={handleOpen}
+            />
+          </div>
+        </>
+      )}
     </section>
   );
 }
