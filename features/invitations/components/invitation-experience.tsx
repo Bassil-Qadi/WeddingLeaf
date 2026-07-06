@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
-import { DoorHalf } from "./door-half";
+import { QuadrantPanel } from "./quadrant-panel";
 import { SealButton } from "./seal-button";
 import { InvitationCard } from "./invitation-card";
 import type { Invitation } from "@/types/invitation";
 
 type Stage = "closed" | "opening" | "open";
+
+const CORNERS = ["tl", "tr", "bl", "br"] as const;
 
 interface InvitationExperienceProps {
   invitation: Invitation;
@@ -19,7 +21,7 @@ export function InvitationExperience({ invitation }: InvitationExperienceProps) 
 
   useEffect(() => {
     if (stage === "opening") {
-      const timer = setTimeout(() => setStage("open"), 850);
+      const timer = setTimeout(() => setStage("open"), 900);
       return () => clearTimeout(timer);
     }
   }, [stage]);
@@ -47,9 +49,24 @@ export function InvitationExperience({ invitation }: InvitationExperienceProps) 
       {stage !== "open" && (
         <>
           <div className="absolute inset-0 z-10" style={{ perspective: 2000 }}>
-            <DoorHalf side="left" isOpening={stage === "opening"} />
-            <DoorHalf side="right" isOpening={stage === "opening"} />
+            {CORNERS.map((corner) => (
+              <QuadrantPanel
+                key={corner}
+                corner={corner}
+                isOpening={stage === "opening"}
+              />
+            ))}
           </div>
+
+          {/* center seam cross-hair — ties the four panels into one design */}
+          <motion.div
+            className="pointer-events-none absolute inset-0 z-10"
+            animate={{ opacity: stage === "opening" ? 0 : 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-primary/40" />
+            <div className="absolute inset-y-6 left-1/2 w-px -translate-x-1/2 bg-primary/40" />
+          </motion.div>
 
           <div className="absolute inset-0 z-20 flex items-center justify-center">
             <SealButton
