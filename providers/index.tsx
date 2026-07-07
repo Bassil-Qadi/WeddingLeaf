@@ -1,6 +1,7 @@
 "use client";
 
 import { ThemeProvider } from "./theme-provider";
+import { AuthSessionProvider } from "./session-provider";
 import { Toaster } from "sonner";
 
 type ProvidersProps = {
@@ -11,13 +12,15 @@ export default function Providers({
   children,
 }: ProvidersProps) {
   return (
-    <ThemeProvider>
-      {children}
-      <Toaster
-        richColors
-        position="top-center"
-        closeButton
-      />
-    </ThemeProvider>
+    <AuthSessionProvider>
+      <ThemeProvider>
+        {children}
+        <Toaster
+          richColors
+          position="top-center"
+          closeButton
+        />
+      </ThemeProvider>
+    </AuthSessionProvider>
   );
 }
