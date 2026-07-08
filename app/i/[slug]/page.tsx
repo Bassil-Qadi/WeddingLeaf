@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { getInvitationBySlug } from "@/features/invitations/data/mock-invitations";
-import { InvitationExperience } from "@/features/invitations/components/invitation-experience";
+import { WarqaExperience } from "@/features/warqa/components/experience/warqa-experience";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -36,7 +36,7 @@ export default async function InvitationPage({ params }: PageProps) {
 
   return (
     <main>
-      <InvitationExperience invitation={invitation} />
+      <WarqaExperience invitation={invitation} />
     </main>
   );
 }
