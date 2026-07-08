@@ -10,9 +10,9 @@ interface SealButtonProps {
 }
 
 /**
- * The wax-seal tap target sitting at the center of the closed envelope.
- * A soft gold ring pulses to invite the tap; on open, the seal presses
- * in and fades as the fold lines light up behind it.
+ * The wax-seal tap target at the centre of the closed envelope. A warm halo
+ * breathes to invite the tap; on open the seal presses in and lifts away as
+ * a burst of golden light blooms from behind it and the flaps begin to peel.
  */
 export function SealButton({ monogram, isOpening, onTap }: SealButtonProps) {
   return (
@@ -20,34 +20,53 @@ export function SealButton({ monogram, isOpening, onTap }: SealButtonProps) {
       type="button"
       onClick={onTap}
       disabled={isOpening}
-      aria-label="افتح الدعوة"
-      className="relative flex h-24 w-24 items-center justify-center"
+      aria-label="اضغط لفتح الدعوة"
+      className="group relative flex h-32 w-32 items-center justify-center outline-none"
     >
-      <motion.span
-        className="absolute inset-0 rounded-full border border-primary/50"
-        animate={
-          isOpening
-            ? { scale: 1.7, opacity: 0 }
-            : { scale: [1, 1.08, 1], opacity: [0.6, 0.15, 0.6] }
-        }
-        transition={
-          isOpening
-            ? { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
-            : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
-        }
+      {/* breathing halo behind the seal */}
+      <span
+        className="pointer-events-none absolute h-28 w-28 rounded-full blur-xl"
+        style={{
+          background:
+            "radial-gradient(circle, var(--inv-gold-glow) 0%, transparent 70%)",
+          animation: isOpening ? "none" : "inv-seal-glow 2.6s ease-in-out infinite",
+        }}
       />
 
+      {/* golden burst on open */}
       <motion.span
-        className="relative flex h-[4.5rem] w-[4.5rem] items-center justify-center drop-shadow-[0_6px_16px_rgba(67,19,28,0.45)]"
+        className="pointer-events-none absolute rounded-full blur-2xl"
+        style={{
+          background:
+            "radial-gradient(circle, var(--inv-gold-glow) 0%, rgba(244,214,155,0.5) 40%, transparent 72%)",
+        }}
+        initial={false}
         animate={
-          isOpening ? { scale: 0.75, opacity: 0 } : { scale: 1, opacity: 1 }
+          isOpening
+            ? { width: 360, height: 360, opacity: [0, 0.95, 0] }
+            : { width: 112, height: 112, opacity: 0 }
         }
-        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 1.1, ease: "easeOut" }}
+      />
+
+      {/* the seal itself */}
+      <motion.span
+        className="relative flex h-24 w-24 items-center justify-center"
+        initial={false}
+        animate={
+          isOpening
+            ? { scale: [1, 0.86, 1.05], opacity: [1, 1, 0] }
+            : { scale: 1, opacity: 1 }
+        }
+        transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.94 }}
       >
-        <WaxSeal className="absolute inset-0 h-full w-full" />
-        <span className="relative font-heading text-base tracking-wide text-[#f3efe6]">
-          {monogram}
-        </span>
+        <WaxSeal
+          className="h-full w-full drop-shadow-[0_10px_22px_rgba(60,15,25,0.5)]"
+          monogram={monogram}
+          monogramSize={26}
+        />
       </motion.span>
     </button>
   );

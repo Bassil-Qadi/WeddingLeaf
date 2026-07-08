@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 
 import { getInvitationBySlug } from "@/features/invitations/data/mock-invitations";
 import { InvitationExperience } from "@/features/invitations/components/invitation-experience";
-import { InvitationDetails } from "@/features/invitations/components/invitation-details";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -38,7 +37,6 @@ export default async function InvitationPage({ params }: PageProps) {
   return (
     <main>
       <InvitationExperience invitation={invitation} />
-      <InvitationDetails invitation={invitation} />
     </main>
   );
 }

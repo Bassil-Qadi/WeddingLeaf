@@ -156,6 +156,78 @@
   --sidebar-ring: #d4bb84;
 }
 
+/*
+ * ─────────────────────────────────────────────────────────────────────
+ * Invitation experience — scoped "blush, wax & bronze" palette.
+ *
+ * These tokens are intentionally LOCAL to the guest-facing invitation
+ * (the envelope + reveal + scroll sections). They live behind `.inv`
+ * so the romantic pink/wine palette never leaks into the ivory-&-gold
+ * dashboard/marketing surfaces. Reference: assets/envelope.mp4.
+ *
+ * NOTE: this block MUST sit before `@layer base` — Tailwind v4 / Lightning
+ * CSS drops hand-written rules placed after the final @layer block.
+ * ─────────────────────────────────────────────────────────────────────
+ */
+.inv {
+  --inv-paper: #efdbd6; /* blush envelope paper */
+  --inv-paper-deep: #e3c6c0; /* shaded fold of the paper */
+  --inv-paper-light: #f7e9e5; /* lit fold of the paper */
+  --inv-cream: #f6efe7; /* card / section background */
+  --inv-cream-deep: #efe3d7; /* watercolour base of a section */
+  --inv-ink: #5c4b40; /* body copy — warm brown-grey */
+  --inv-ink-soft: #927e6f; /* muted labels */
+  --inv-script: #7c5b43; /* bronze calligraphy headings */
+  --inv-wine: #571826; /* wax / burgundy */
+  --inv-wine-light: #7c2333;
+  --inv-wine-glow: #9c3b47;
+  --inv-gold: #c9a24a; /* seal rim + hairline flourishes */
+  --inv-gold-glow: #f4d69b; /* warm light spilling from the seams */
+  --inv-sage: #94a383; /* foliage */
+  --inv-sage-deep: #6f7f60;
+  --inv-rose: #d4a29b; /* rose petals */
+  --inv-rose-deep: #b87b73;
+  --inv-line: #decabc; /* hairline dividers */
+
+  background: var(--inv-cream);
+  color: var(--inv-ink);
+}
+
+/* Warm, backlit pulse behind the closed wax seal, inviting the tap. */
+@keyframes inv-seal-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.12);
+  }
+}
+
+/* Slow drift for the floating foliage that frames a few sections. */
+@keyframes inv-drift {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(3deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inv *,
+  .inv *::before,
+  .inv *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
