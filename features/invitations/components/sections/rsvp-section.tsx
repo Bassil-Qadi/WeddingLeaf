@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronUp } from "lucide-react";
+import { CalendarClock } from "lucide-react";
 
 import { WaxSeal } from "../wax-seal";
 import { SectionTitle } from "../decor/section-title";
@@ -12,46 +12,61 @@ import { RsvpForm } from "./rsvp-form";
 import type { Invitation } from "@/types/invitation";
 
 /**
- * "أكّدوا حضوركم" — the closing call-to-action. A burgundy RSVP wax seal
- * opens the attendance form; a portrait and the couple's sign-off round out
- * the invitation (assets/envelope.mp4).
+ * "أكّدوا حضوركم" — the closing call-to-action. A burgundy wax seal, haloed
+ * and breathing, opens the attendance form; the couple's foil sign-off and an
+ * optional portrait round out the invitation. Reference: assets/envelope.mp4.
  */
 export function RsvpSection({ invitation }: { invitation: Invitation }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="relative w-full bg-[var(--inv-cream-deep)] px-6 pb-24 pt-20">
+    <section className="relative w-full overflow-hidden bg-[var(--inv-cream-deep)] px-6 pb-28 pt-20">
       <Reveal className="mx-auto max-w-md text-center">
         <SectionTitle>أكّدوا حضوركم</SectionTitle>
         <p className="mx-auto mt-6 max-w-sm font-sans text-[15px] leading-loose text-[var(--inv-ink)]">
-          لمساعدتنا في التحضير لهذه الأمسية السعيدة، نرجو منكم تأكيد حضوركم.
+          لمساعدتنا في التحضير لهذه الأمسية السعيدة، يسعدنا أن نستقبل تأكيد حضوركم.
         </p>
 
-        {/* RSVP wax seal */}
+        {invitation.rsvpDeadline && (
+          <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-[var(--inv-line)] bg-white/50 px-4 py-1.5 font-sans text-xs text-[var(--inv-ink-soft)]">
+            <CalendarClock className="size-3.5 text-[var(--inv-gold)]" />
+            يرجى التأكيد قبل {invitation.rsvpDeadline}
+          </span>
+        )}
+
+        {/* wax-seal CTA */}
         <motion.button
           type="button"
           onClick={() => setOpen(true)}
-          className="mx-auto mt-10 flex flex-col items-center"
+          className="group relative mx-auto mt-10 flex flex-col items-center outline-none"
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.95 }}
           aria-label="افتح نموذج تأكيد الحضور"
         >
-          <WaxSeal
-            className="h-24 w-24 drop-shadow-[0_10px_22px_rgba(87,24,38,0.45)]"
-            monogram="RSVP"
-            monogramSize={17}
-          />
-          <span className="mt-3 flex flex-col items-center text-[var(--inv-ink-soft)]">
-            <ChevronUp className="size-4" />
-            <span className="font-heading text-base">اضغط للفتح</span>
+          <span className="relative">
+            <span
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl"
+              style={{
+                background: "radial-gradient(circle, var(--inv-gold-glow) 0%, transparent 68%)",
+                animation: "inv-breathe 2.8s ease-in-out infinite",
+              }}
+            />
+            <WaxSeal
+              className="h-24 w-24 drop-shadow-[0_10px_22px_rgba(87,24,38,0.45)]"
+              monogram="RSVP"
+              monogramSize={17}
+            />
+          </span>
+          <span className="mt-4 font-heading text-base text-[var(--inv-wine)]">
+            اضغط لتأكيد الحضور
           </span>
         </motion.button>
 
-        <p className="mt-10 font-heading text-2xl text-[var(--inv-script)]">
-          نتطلع لرؤيتكم
+        <p className="mt-12 font-sans text-xs tracking-[0.28em] text-[var(--inv-ink-soft)]">
+          بكل حب
         </p>
-        <p className="mt-1 font-heading text-lg text-[var(--inv-ink-soft)]">
-          {invitation.groomName} و {invitation.brideName}
+        <p className="mt-3 inv-foil font-heading text-3xl">
+          {invitation.groomName} &amp; {invitation.brideName}
         </p>
 
         {invitation.couplePhoto && (
@@ -68,9 +83,7 @@ export function RsvpSection({ invitation }: { invitation: Invitation }) {
       </Reveal>
 
       <AnimatePresence>
-        {open && (
-          <RsvpForm invitation={invitation} onClose={() => setOpen(false)} />
-        )}
+        {open && <RsvpForm invitation={invitation} onClose={() => setOpen(false)} />}
       </AnimatePresence>
     </section>
   );

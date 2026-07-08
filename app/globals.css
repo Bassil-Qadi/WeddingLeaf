@@ -189,8 +189,112 @@
   --inv-rose-deep: #b87b73;
   --inv-line: #decabc; /* hairline dividers */
 
+  /* elevated tokens for the rebuilt "Sealed Letter" experience */
+  --inv-gold-deep: #a67c2e; /* darkest stop of the foil gradient */
+  --inv-gold-soft: #e9c877; /* mid foil highlight */
+  --inv-night: #300b16; /* dramatic wine-black backdrop */
+  --inv-night-2: #4a1420; /* raised tone within the dark section */
+  --inv-glass: rgba(255, 253, 250, 0.55); /* frosted card fill */
+  --inv-shadow: 87, 24, 38; /* wine, as rgb triplet for shadows */
+
   background: var(--inv-cream);
   color: var(--inv-ink);
+}
+
+/*
+ * Brushed-gold foil for headline text. Clip a moving multi-stop gradient to
+ * the glyphs so the letters read like light catching real gold leaf.
+ */
+.inv-foil {
+  background-image: linear-gradient(
+    100deg,
+    var(--inv-gold-deep) 0%,
+    var(--inv-gold-soft) 22%,
+    var(--inv-gold-glow) 38%,
+    var(--inv-gold) 50%,
+    var(--inv-gold-glow) 62%,
+    var(--inv-gold-soft) 78%,
+    var(--inv-gold-deep) 100%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.inv-foil-anim {
+  animation: inv-foil-pan 7s linear infinite;
+}
+@keyframes inv-foil-pan {
+  to {
+    background-position: 220% center;
+  }
+}
+
+/* Frosted-glass card used by the detail / location / RSVP surfaces. */
+.inv-glass {
+  background: var(--inv-glass);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 24px 60px -32px rgba(var(--inv-shadow), 0.5);
+}
+
+/* A single rose petal / gold mote drifting down the ambient layer. */
+@keyframes inv-fall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--petal-op, 0.5);
+  }
+  92% {
+    opacity: var(--petal-op, 0.5);
+  }
+  100% {
+    transform: translate3d(var(--petal-drift, 24px), 112vh, 0)
+      rotate(var(--petal-spin, 320deg));
+    opacity: 0;
+  }
+}
+
+/* A specular sheen that sweeps once across a card or the wax seal. */
+@keyframes inv-sheen {
+  0% {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(160%) skewX(-18deg);
+  }
+}
+
+/* Slow living breath for gilt frames and haloes. */
+@keyframes inv-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.04);
+  }
+}
+
+/* Lazily panning aurora wash behind the dark countdown. */
+@keyframes inv-aurora {
+  0% {
+    transform: translate3d(-6%, 0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate3d(6%, 3%, 0) scale(1.2);
+  }
+  100% {
+    transform: translate3d(-6%, 0, 0) scale(1.1);
+  }
 }
 
 /* Warm, backlit pulse behind the closed wax seal, inviting the tap. */
