@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { WaxSeal } from "./wax-seal";
 
 interface SealButtonProps {
   monogram: string;
@@ -9,9 +10,9 @@ interface SealButtonProps {
 }
 
 /**
- * The tap target that replaces the old literal envelope. A soft pulsing
- * ring invites the tap; on open, the ring expands outward and the core
- * fades — reads as "unlocking" rather than "opening mail".
+ * The wax-seal tap target sitting at the center of the closed envelope.
+ * A soft gold ring pulses to invite the tap; on open, the seal presses
+ * in and fades as the fold lines light up behind it.
  */
 export function SealButton({ monogram, isOpening, onTap }: SealButtonProps) {
   return (
@@ -20,30 +21,31 @@ export function SealButton({ monogram, isOpening, onTap }: SealButtonProps) {
       onClick={onTap}
       disabled={isOpening}
       aria-label="افتح الدعوة"
-      className="relative flex h-28 w-28 items-center justify-center"
+      className="relative flex h-24 w-24 items-center justify-center"
     >
       <motion.span
         className="absolute inset-0 rounded-full border border-primary/50"
         animate={
           isOpening
-            ? { scale: 1.9, opacity: 0 }
+            ? { scale: 1.7, opacity: 0 }
             : { scale: [1, 1.08, 1], opacity: [0.6, 0.15, 0.6] }
         }
         transition={
           isOpening
-            ? { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+            ? { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
             : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
         }
       />
 
       <motion.span
-        className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/90 to-primary shadow-[0_8px_30px_-8px_rgba(198,168,106,0.55)]"
+        className="relative flex h-[4.5rem] w-[4.5rem] items-center justify-center drop-shadow-[0_6px_16px_rgba(67,19,28,0.45)]"
         animate={
-          isOpening ? { scale: 0.7, opacity: 0 } : { scale: 1, opacity: 1 }
+          isOpening ? { scale: 0.75, opacity: 0 } : { scale: 1, opacity: 1 }
         }
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
       >
-        <span className="font-heading text-lg text-primary-foreground">
+        <WaxSeal className="absolute inset-0 h-full w-full" />
+        <span className="relative font-heading text-base tracking-wide text-[#f3efe6]">
           {monogram}
         </span>
       </motion.span>
