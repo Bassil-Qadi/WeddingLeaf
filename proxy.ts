@@ -1,29 +1,21 @@
+import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-import { auth } from "./lib/auth";
+import { authConfig } from "./lib/auth.config";
 
-const PROTECTED_PREFIXES = ["/dashboard"];
+// Deliberately not imported from `./lib/auth`: that module pulls in mongoose
+// and bcrypt, which cannot be bundled for an edge runtime.
+const { auth } = NextAuth(authConfig);
 
-export default async function proxy(request: NextRequest) {
-  const isProtected = PROTECTED_PREFIXES.some((prefix) =>
-    request.nextUrl.pathname.startsWith(prefix),
-  );
-
-  if (!isProtected) {
+export default auth((request) => {
+  if (request.auth) {
     return NextResponse.next();
   }
 
-  const session = await auth();
-
-  if (!session) {
-    const signInUrl = new URL("/auth/sign-in", request.url);
-    signInUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
-    return NextResponse.redirect(signInUrl);
-  }
-
-  return NextResponse.next();
-}
+  const signInUrl = new URL("/auth/sign-in", request.nextUrl.origin);
+  signInUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+  return NextResponse.redirect(signInUrl);
+});
 
 export const config = {
   matcher: ["/dashboard/:path*"],

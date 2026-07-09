@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
+import { authConfig } from "@/lib/auth.config";
 import { connectToDatabase } from "@/lib/mongodb";
 import { User } from "@/models/User";
 import { signInSchema } from "@/lib/validations/auth";
@@ -10,10 +11,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // JWT sessions: no database adapter needed. We look users up ourselves
   // via Mongoose inside `authorize`, so there's no version conflict
   // between mongoose's bundled mongodb driver and @auth/mongodb-adapter's.
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/auth/sign-in",
-  },
+  ...authConfig,
   providers: [
     Credentials({
       credentials: {
@@ -47,18 +45,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // Add OAuth providers here later, e.g. Google:
     // Google({ clientId: process.env.AUTH_GOOGLE_ID, clientSecret: process.env.AUTH_GOOGLE_SECRET }),
   ],
-  callbacks: {
-    jwt: async ({ token, user }) => {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    session: async ({ session, token }) => {
-      if (session.user && token.id) {
-        session.user.id = token.id as string;
-      }
-      return session;
-    },
-  },
 });
