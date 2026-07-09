@@ -11,6 +11,15 @@
   --font-mono: ui-monospace, "SF Mono", Consolas, monospace;
   --font-heading: var(--font-amiri);
   --font-dashboard: var(--font-cairo);
+  --font-serif: var(--font-cormorant);
+
+  /* Golden Thread invitation palette — only resolvable inside `.gt`. */
+  --color-gt-paper: var(--gt-paper);
+  --color-gt-ink: var(--gt-ink);
+  --color-gt-gold: var(--gt-gold);
+  --color-gt-gold-light: var(--gt-gold-light);
+  --color-gt-gold-deep: var(--gt-gold-deep);
+  --color-gt-gold-btn: var(--gt-gold-btn);
 
   /* Semantic status colors — not part of shadcn's default set */
   --color-success: var(--success);
@@ -329,6 +338,224 @@
   .inv *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+/*
+ * ─────────────────────────────────────────────────────────────────────
+ * Invitation experience — "Golden Thread" (كشف الطرحة → الخيط الذهبي).
+ *
+ * Scoped to `.gt` for the same reason `.inv` is scoped: the candlelit
+ * ivory + gold palette belongs to the guest-facing invitation only and
+ * must never leak into the dashboard.
+ *
+ * Everything here is either a color token, a looping ambient animation,
+ * or a multi-layer gradient — i.e. the things Tailwind utilities express
+ * badly. Reveal/entrance motion lives in Framer Motion, not here.
+ *
+ * NOTE: like `.inv`, this block MUST sit before `@layer base` — Tailwind
+ * v4 / Lightning CSS drops hand-written rules placed after it.
+ * ─────────────────────────────────────────────────────────────────────
+ */
+.gt {
+  --gt-paper: #f4eee3; /* page base */
+  --gt-ink: #2b2620; /* headings, names */
+  --gt-gold: #a67c2e; /* labels, thread mid */
+  --gt-gold-light: #d8ab4a; /* thread top, lit nodes */
+  --gt-gold-deep: #7d5d20; /* thread bottom */
+  --gt-gold-btn: #8a6620; /* button labels */
+
+  /* Candlelit ivory: three warm pools over a vertical wash. */
+  background:
+    radial-gradient(
+      125% 85% at 50% -8%,
+      rgba(255, 252, 246, 0.9),
+      transparent 55%
+    ),
+    radial-gradient(80% 55% at 82% 12%, rgba(214, 178, 120, 0.1), transparent 60%),
+    radial-gradient(70% 50% at 12% 92%, rgba(198, 168, 120, 0.1), transparent 60%),
+    linear-gradient(180deg, #f8f3ea 0%, #f2eadd 45%, #ece2d0 100%);
+  color: var(--gt-ink);
+}
+
+/* Fixed fractal-noise wash so the ivory reads as paper, not as flat fill. */
+.gt-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: 0.045;
+}
+
+/* A single grain of gold dust, drifting up and out. */
+.gt-mote {
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(184, 147, 63, 0.85),
+    rgba(184, 147, 63, 0)
+  );
+  animation: gt-drift var(--mote-duration) ease-in-out var(--mote-delay) infinite;
+}
+
+/* The veil itself: near-opaque ivory, hanging (inset shadow at the hem). */
+.gt-veil {
+  background:
+    radial-gradient(
+      48% 42% at 50% 44%,
+      rgba(255, 253, 248, 0.96),
+      transparent 72%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(250, 245, 237, 0.98) 0%,
+      rgba(244, 238, 227, 0.97) 55%,
+      rgba(238, 229, 215, 0.97) 100%
+    );
+  box-shadow: inset 0 -60px 90px -60px rgba(120, 90, 40, 0.18);
+}
+
+/* Silk shimmer sweeping across the veil, and the lace weave beneath it. */
+.gt-sheen {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  animation: gt-sheen 7s ease-in-out infinite;
+}
+
+.gt-lace {
+  opacity: 0.5;
+  background-image: radial-gradient(
+    rgba(166, 124, 46, 0.1) 1px,
+    transparent 1.4px
+  );
+  background-size: 22px 22px;
+}
+
+/* The hero `&` — gold leaf catching the light as it turns. */
+.gt-amp {
+  background: linear-gradient(90deg, #7d5d20, #d8ab4a, #7d5d20);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gt-shimmer 6s linear infinite;
+}
+
+.gt-breathe {
+  animation: gt-breathe var(--breathe-duration, 5s) ease-in-out infinite;
+}
+
+.gt-pulse {
+  animation: gt-pulse 3.2s ease-in-out infinite;
+}
+
+/*
+ * A waypoint on the thread. `data-lit` is flipped by the scroll handler as
+ * the reading line passes the node — the thread does not just draw past it,
+ * it sets it alight.
+ */
+.gt-node {
+  border-radius: 50%;
+  background: var(--gt-paper);
+  border: 1.5px solid rgba(166, 124, 46, 0.5);
+  box-shadow: 0 0 0 4px rgba(166, 124, 46, 0.05);
+  transition: all 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.gt-node[data-lit="true"] {
+  background: radial-gradient(circle, #fff1cf, #d8ab4a 55%, #a67c2e);
+  border-color: var(--gt-gold);
+  box-shadow:
+    0 0 16px rgba(216, 171, 74, 0.6),
+    0 0 0 5px rgba(166, 124, 46, 0.1);
+  transform: scale(1.3);
+}
+
+/* The origin knot and the closing knot are centered and swell less. */
+.gt-node[data-kind="origin"],
+.gt-node[data-kind="knot"] {
+  box-shadow: 0 0 0 5px rgba(166, 124, 46, 0.05);
+}
+
+.gt-node[data-kind="origin"][data-lit="true"],
+.gt-node[data-kind="knot"][data-lit="true"] {
+  transform: scale(1.15);
+}
+
+@keyframes gt-drift {
+  0% {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-64px);
+    opacity: 0;
+  }
+}
+
+@keyframes gt-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes gt-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes gt-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(166, 124, 46, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px 1px rgba(166, 124, 46, 0.22);
+  }
+}
+
+@keyframes gt-sheen {
+  0% {
+    transform: translateX(-160%) skewX(-14deg);
+  }
+  60%,
+  100% {
+    transform: translateX(160%) skewX(-14deg);
+  }
+}
+
+/*
+ * Reduced motion: kill every ambient loop. The thread draw, the comet and
+ * the veil lift are disabled in JS via `useReducedMotion()` — an animation
+ * that carries meaning is replaced there, not merely sped up.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .gt *,
+  .gt *::before,
+  .gt *::after {
+    animation: none !important;
+  }
+  .gt-node {
+    transition: none !important;
   }
 }
 

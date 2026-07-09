@@ -1,13 +1,21 @@
 import localFont from "next/font/local";
-import { Amiri } from "next/font/google";
+import { Amiri, Cormorant_Garamond } from "next/font/google";
 
 /**
  * Primary Arabic body font — used everywhere by default (--font-sans).
  * Self-hosted from /assets/fonts so the app never depends on a live
  * connection to Google Fonts at build or request time.
+ *
+ * ExtraLight (200) exists for the invitation's large display text — the
+ * hairline strokes at 100px are what make the names read as "luxury".
  */
 export const arabic = localFont({
   src: [
+    {
+      path: "../assets/fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-ExtraLight.ttf",
+      weight: "200",
+      style: "normal",
+    },
     {
       path: "../assets/fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Light.ttf",
       weight: "300",
@@ -58,5 +66,18 @@ export const amiri = Amiri({
   subsets: ["arabic", "latin"],
   variable: "--font-amiri",
   weight: ["400", "700"],
+  display: "swap",
+});
+
+/**
+ * Latin serif companion for the invitation experience — carries the `&`,
+ * the small-caps labels, the chapter numerals and the dates. It is never a
+ * text face: it only ever sets a handful of glyphs beside the Arabic.
+ */
+export const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-cormorant",
+  weight: ["500", "600"],
+  style: ["normal", "italic"],
   display: "swap",
 });

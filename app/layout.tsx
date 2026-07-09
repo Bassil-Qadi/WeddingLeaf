@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Providers from "@/providers";
-import { arabic, amiri, cairo } from "@/config/fonts";
+import { arabic, amiri, cairo, cormorant } from "@/config/fonts";
 import { APP } from "@/config/app";
 import { designSystem } from "@/config/design-system";
 import "./globals.css";
@@ -39,6 +39,7 @@ export default function RootLayout({
     ${cairo.variable}
     ${arabic.variable}
     ${amiri.variable}
+    ${cormorant.variable}
     h-full
     antialiased
   `}
