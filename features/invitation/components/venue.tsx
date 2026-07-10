@@ -50,7 +50,7 @@ export function Venue({
             render={
               <a href={mapUrl} target="_blank" rel="noopener noreferrer" />
             }
-            className="mt-[22px] h-auto gap-2.5 rounded-full border border-gt-gold/45 px-[26px] py-[13px] text-sm font-normal tracking-[0.06em] text-gt-gold-btn transition-colors duration-400 hover:border-gt-gold/75 hover:bg-gt-gold/10 hover:text-gt-gold-btn"
+            className="mt-[22px] h-auto gap-2.5 rounded-full border border-gt-gold/45 px-[26px] py-[13px] text-sm font-normal [word-spacing:0.06em] text-gt-gold-btn transition-colors duration-400 hover:border-gt-gold/75 hover:bg-gt-gold/10 hover:text-gt-gold-btn"
           >
             احصلوا على الاتجاهات
             <ArrowLeft className="size-4" strokeWidth={1.5} />

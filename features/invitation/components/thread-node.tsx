@@ -21,7 +21,7 @@ export function ThreadNode({
   kind = "waypoint",
   className,
 }: ThreadNodeProps) {
-  const { registerNode, litCount } = useThread();
+  const { registerNode } = useThread();
 
   const ref = useCallback(
     (el: HTMLSpanElement | null) => registerNode(index, el),
@@ -33,7 +33,9 @@ export function ThreadNode({
       ref={ref}
       aria-hidden="true"
       data-kind={kind}
-      data-lit={index < litCount}
+      // `data-lit` is owned by `<GoldenThread>` from here on: it writes it
+      // directly to this element as the reading line passes.
+      data-lit="false"
       className={cn(
         "gt-node absolute z-[2]",
         // Nodes are centered on their anchor by negative margins rather than

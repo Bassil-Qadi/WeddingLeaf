@@ -46,18 +46,16 @@ export function Closing({
         />
 
         {rsvpPhone && (
-          <p className="mb-2 text-[13px] tracking-[0.1em] text-gt-ink/60">
+          <p className="mb-2 text-[13px] [word-spacing:0.1em] text-gt-ink/60">
             لتأكيد الحضور: {rsvpPhone}
           </p>
         )}
 
-        <p className="mb-[26px] text-[13px] tracking-[0.14em] text-gt-gold/90">
-          {hashtag}
-        </p>
+        <p className="mb-[26px] text-[13px] text-gt-gold/90">{hashtag}</p>
 
         <p
           dir="ltr"
-          className="font-serif text-[13px] tracking-[0.28em] text-gt-ink/55"
+          className="font-serif text-[13px] [word-spacing:0.28em] text-gt-ink/55"
         >
           {brideName} &amp; {groomName} · {dateNumeric}
         </p>

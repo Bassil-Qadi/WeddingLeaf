@@ -123,7 +123,7 @@ export function Veil({
           </div>
         </motion.div>
 
-        <p className="mb-3.5 text-xs tracking-[0.34em] text-gt-gold/95">
+        <p className="mb-3.5 text-xs [word-spacing:0.34em] text-gt-gold/95">
           أنتم مدعوّون لحضور حفل زفاف
         </p>
 
@@ -133,19 +133,19 @@ export function Veil({
           {groomName}
         </p>
 
-        <p className="mb-10 font-serif text-[15px] tracking-[0.16em] text-gt-ink/55">
+        <p className="mb-10 text-[15px] [word-spacing:0.16em] text-gt-ink/55">
           {dateDisplay}
         </p>
 
         <Button
           variant="ghost"
           onClick={onOpen}
-          className="gt-pulse h-auto rounded-full border border-gt-gold/55 bg-gt-gold/[0.06] px-11 py-4 text-[15px] font-normal tracking-[0.08em] text-gt-gold-btn transition-[background-color,border-color] duration-400 hover:border-gt-gold/85 hover:bg-gt-gold/15 hover:text-gt-gold-btn"
+          className="gt-pulse h-auto rounded-full border border-gt-gold/55 bg-gt-gold/[0.06] px-11 py-4 text-[15px] font-normal [word-spacing:0.08em] text-gt-gold-btn transition-[background-color,border-color] duration-400 hover:border-gt-gold/85 hover:bg-gt-gold/15 hover:text-gt-gold-btn"
         >
           اكشفوا الطرحة
         </Button>
 
-        <p className="mt-5 text-xs tracking-[0.2em] text-gt-ink/[0.42]">
+        <p className="mt-5 text-xs [word-spacing:0.2em] text-gt-ink/[0.42]">
           المسوا لكشف الدعوة
         </p>
       </motion.div>

@@ -234,14 +234,6 @@ export function GoldenThread({ opened }: { opened: boolean }) {
           <stop offset="1" stopColor="#7d5d20" />
         </linearGradient>
 
-        <filter id="gt-glow" x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur stdDeviation="2.6" result="blurred" />
-          <feMerge>
-            <feMergeNode in="blurred" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-
         <radialGradient id="gt-comet">
           <stop offset="0" stopColor="#fff1cf" />
           <stop offset="0.4" stopColor="#d8a93f" />
@@ -259,6 +251,22 @@ export function GoldenThread({ opened }: { opened: boolean }) {
         strokeLinecap="round"
       />
 
+      {/*
+        The glow, as a soft wide stroke rather than a `feGaussianBlur`. The
+        thread spans the whole track — several viewports tall — so a filter
+        here asks the compositor to re-rasterize a buffer of the entire page
+        on every scroll frame. Two plain strokes cost nothing and read the
+        same at these opacities.
+      */}
+      <motion.path
+        d={geometry?.d}
+        fill="none"
+        stroke="rgba(216,171,74,0.18)"
+        strokeWidth="5"
+        strokeLinecap="round"
+        style={{ pathLength }}
+      />
+
       <motion.path
         ref={progressRef}
         d={geometry?.d}
@@ -266,7 +274,6 @@ export function GoldenThread({ opened }: { opened: boolean }) {
         stroke="url(#gt-gold-gradient)"
         strokeWidth="1.8"
         strokeLinecap="round"
-        filter="url(#gt-glow)"
         style={{ pathLength }}
       />
 

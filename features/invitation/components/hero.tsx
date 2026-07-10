@@ -67,7 +67,7 @@ export function Hero({
         initial="hidden"
         animate={animate}
         variants={entrance(0, 1.1)}
-        className="relative z-[1] mb-[26px] font-serif text-xs uppercase tracking-[0.5em] text-gt-gold/95 ps-[0.5em]"
+        className="relative z-[1] mb-[26px] text-xs [word-spacing:0.5em] text-gt-gold/95"
       >
         بطاقة دعوة
       </motion.div>
@@ -101,7 +101,7 @@ export function Hero({
       >
         {message ?? "يتشرّفان بدعوتكم لمشاركتهما فرحة العمر"}
         <br />
-        <span className="font-serif text-sm tracking-[0.14em] text-gt-gold/90">
+        <span className="text-sm [word-spacing:0.14em] text-gt-gold/90">
           {city} · {dateDisplay}
         </span>
       </motion.p>
@@ -112,7 +112,7 @@ export function Hero({
         variants={entrance(0.7, 1)}
         className="absolute inset-x-0 bottom-11 z-[1] flex flex-col items-center gap-3"
       >
-        <span className="text-xs tracking-[0.24em] text-gt-ink/50">
+        <span className="text-xs [word-spacing:0.24em] text-gt-ink/50">
           تابعوا الخيط
         </span>
         <motion.span

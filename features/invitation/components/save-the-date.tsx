@@ -38,7 +38,7 @@ export function SaveTheDate({
           </div>
 
           {dateDetail && (
-            <p className="mb-[34px] text-[15px] tracking-[0.2em] text-gt-ink/60">
+            <p className="mb-[34px] text-[15px] [word-spacing:0.2em] text-gt-ink/60">
               {dateDetail}
             </p>
           )}

@@ -32,7 +32,7 @@ export function Countdown({ targetISO }: { targetISO: string }) {
           <div className="text-[clamp(24px,7vw,34px)] font-light tabular-nums text-gt-gold">
             {toArabicPadded(countdown[unit])}
           </div>
-          <div className="mt-2 text-[11px] tracking-[0.12em] text-gt-ink/55">
+          <div className="mt-2 text-[11px] text-gt-ink/55">
             {LABELS[unit]}
           </div>
         </div>
