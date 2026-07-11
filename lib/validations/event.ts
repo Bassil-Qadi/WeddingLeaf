@@ -28,8 +28,14 @@ export const createEventSchema = z.object({
   venueAddress: z.string().min(2, { message: "عنوان القاعة مطلوب" }),
   mapUrl: z.string().url({ message: "رابط خرائط جوجل غير صالح" }),
   dressCode: z.string().optional(),
-  schedule: z.array(scheduleItemSchema).default([]),
+  schedule: z.array(scheduleItemSchema),
   message: z.string().optional(),
 });
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;
+
+export const updateEventSchema = createEventSchema
+  .partial()
+  .extend({ isPublished: z.boolean().optional() });
+
+export type UpdateEventInput = z.infer<typeof updateEventSchema>;

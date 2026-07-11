@@ -2,12 +2,6 @@ import { Schema, model, models, type InferSchemaType, type Model } from "mongoos
 
 const UserSchema = new Schema(
   {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
     name: {
       type: String,
       required: true,

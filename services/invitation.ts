@@ -3,23 +3,28 @@ import { Event } from "@/models/Event";
 import type { InvitationData } from "@/features/invitation/types";
 
 /**
- * Fetch a published invitation by its public slug and map it into the plain,
+ * Fetch an invitation by its public slug and map it into the plain,
  * serializable {@link InvitationData} DTO the client experience consumes.
  *
- * Returns `null` when no published event matches — the page turns that into
- * a `notFound()`. Any connection error is swallowed to `null` so a missing
- * DB in local preview degrades gracefully (the page then falls back to the
- * sample invitation rather than crashing).
+ * Unpublished events are only returned to their owner (`viewerId` matching
+ * `ownerId`) — this powers the "preview as owner" link in the dashboard
+ * without exposing draft invitations publicly.
+ *
+ * Returns `null` when no matching event is visible to this viewer — the
+ * page turns that into a `notFound()`. Any connection error is swallowed to
+ * `null` so a missing DB in local preview degrades gracefully (the page then
+ * falls back to the sample invitation rather than crashing).
  */
 export async function getInvitationBySlug(
   slug: string,
+  viewerId?: string,
 ): Promise<InvitationData | null> {
   try {
     await connectToDatabase();
 
     const doc = await Event.findOne({
       slug: slug.toLowerCase(),
-      isPublished: true,
+      $or: [{ isPublished: true }, ...(viewerId ? [{ ownerId: viewerId }] : [])],
     }).lean();
 
     if (!doc) return null;

@@ -3,6 +3,7 @@ import { InvitationExperience } from "@/features/invitation/components/invitatio
 import { SAMPLE_INVITATION } from "@/features/invitation/data/sample-invitation";
 import type { InvitationData } from "@/features/invitation/types";
 import { getInvitationBySlug } from "@/services/invitation";
+import { auth } from "@/lib/auth";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -11,10 +12,14 @@ interface PageProps {
 /**
  * Fall back to the sample so the experience is viewable before the DB is
  * seeded / for local design preview. A real published invitation always wins
- * over the sample.
+ * over the sample. `viewerId` lets the owner preview their own unpublished
+ * draft — see services/invitation.ts.
  */
-async function loadInvitation(slug: string): Promise<InvitationData> {
-  return (await getInvitationBySlug(slug)) ?? SAMPLE_INVITATION;
+async function loadInvitation(
+  slug: string,
+  viewerId?: string,
+): Promise<InvitationData> {
+  return (await getInvitationBySlug(slug, viewerId)) ?? SAMPLE_INVITATION;
 }
 
 export async function generateMetadata({
@@ -43,7 +48,8 @@ export async function generateMetadata({
 
 export default async function InvitationPage({ params }: PageProps) {
   const { slug } = await params;
-  const invitation = await loadInvitation(slug);
+  const session = await auth();
+  const invitation = await loadInvitation(slug, session?.user?.id);
 
   return (
     <main className="flex-1">

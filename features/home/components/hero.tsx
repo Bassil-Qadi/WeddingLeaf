@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { PageContainer } from "@/components/common/page-container";
 import { Section } from "@/components/common/section";
@@ -65,13 +66,14 @@ text-center
             transition={motionPreset.cinematic}
             className="mt-12 flex justify-center gap-5"
           >
-            <Button size="lg">
+            <Button size="lg" render={<Link href="/auth/sign-up" />}>
               ابدأ الآن
             </Button>
 
             <Button
               variant="outline"
               size="lg"
+              render={<Link href="/i/sara-omar" />}
             >
               مشاهدة العرض
             </Button>

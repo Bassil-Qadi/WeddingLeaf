@@ -51,14 +51,14 @@ export function Navbar() {
           <div className="flex items-center gap-3">
 
             <Link
-              href="/login"
+              href="/auth/sign-in"
               className="text-sm"
             >
               تسجيل الدخول
             </Link>
 
             <Link
-              href="/register"
+              href="/auth/sign-up"
               className="rounded-full bg-primary px-5 py-2.5 text-primary-foreground transition hover:opacity-90"
             >
               ابدأ مجانًا
