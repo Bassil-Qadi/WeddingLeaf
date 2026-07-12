@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { ArrowRight } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { getEventForOwner } from "@/services/events";
@@ -31,13 +33,25 @@ export default async function EditEventPage({ params }: PageProps) {
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard"
+            className="mb-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowRight className="size-4" />
+            العودة إلى دعواتي
+          </Link>
+          <div className="flex items-center gap-2.5">
             <h1 className="font-heading text-2xl">
               {event.brideName} &amp; {event.groomName}
             </h1>
-            <Badge variant="outline">{STYLE_LABELS[event.style]}</Badge>
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/10 text-primary"
+            >
+              {STYLE_LABELS[event.style]}
+            </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             آخر تحديث {new Date(event.updatedAt).toLocaleDateString("ar")}
           </p>
         </div>

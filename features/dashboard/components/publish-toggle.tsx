@@ -4,8 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Copy, Eye } from "lucide-react";
+import { Copy, Eye, Globe, PencilLine } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -49,22 +50,51 @@ export function PublishToggle({
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-card p-4">
+    <div
+      className={cn(
+        "flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-card p-4 transition-colors",
+        isPublished && "border-success/30 bg-success/5"
+      )}
+    >
       <div className="flex items-center gap-3">
-        <Switch
-          id="publish"
-          checked={isPublished}
-          onCheckedChange={handleChange}
-          disabled={pending}
-        />
+        <div
+          className={cn(
+            "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors",
+            isPublished
+              ? "bg-success/15 text-success"
+              : "bg-muted text-muted-foreground"
+          )}
+        >
+          {isPublished ? (
+            <Globe className="size-5" />
+          ) : (
+            <PencilLine className="size-5" />
+          )}
+        </div>
+
         <div>
-          <Label htmlFor="publish">
-            {isPublished ? "الدعوة منشورة" : "الدعوة مسودة"}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {isPublished
-              ? "يمكن لضيوفك الوصول إلى الدعوة عبر الرابط العام"
-              : "الدعوة غير مرئية للضيوف حتى يتم نشرها"}
+          <div className="flex items-center gap-2.5">
+            <Label htmlFor="publish">
+              {isPublished ? "الدعوة منشورة" : "الدعوة مسودة"}
+            </Label>
+            <Switch
+              id="publish"
+              checked={isPublished}
+              onCheckedChange={handleChange}
+              disabled={pending}
+            />
+          </div>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {isPublished ? (
+              <>
+                متاحة لضيوفك على{" "}
+                <code dir="ltr" className="rounded bg-muted px-1 py-0.5 text-[11px]">
+                  {publicUrl}
+                </code>
+              </>
+            ) : (
+              "الدعوة غير مرئية للضيوف حتى يتم نشرها"
+            )}
           </p>
         </div>
       </div>
@@ -74,6 +104,7 @@ export function PublishToggle({
           <Copy /> نسخ الرابط
         </Button>
         <Button
+          nativeButton={false}
           variant="secondary"
           size="sm"
           render={<Link href={publicUrl} target="_blank" />}

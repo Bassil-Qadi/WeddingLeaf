@@ -8,6 +8,7 @@ import {
   Calendar,
   Copy,
   Eye,
+  Leaf,
   Loader2,
   MapPin,
   MoreVertical,
@@ -15,6 +16,7 @@ import {
   Trash2,
 } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import type { EventSummary } from "@/services/events";
 import { STYLE_LABELS } from "@/lib/wedding-styles";
 import { Button } from "@/components/ui/button";
@@ -51,6 +53,7 @@ function EventCard({ event }: { event: EventSummary }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const publicUrl = `/i/${event.slug}`;
+  const editUrl = `/dashboard/events/${event.id}`;
 
   function copyLink() {
     const url = `${window.location.origin}${publicUrl}`;
@@ -76,35 +79,50 @@ function EventCard({ event }: { event: EventSummary }) {
   }
 
   return (
-    <Card className="overflow-hidden">
-      <div className="relative h-36 w-full bg-[radial-gradient(circle_at_top,#fdf6ea,transparent_70%)]">
+    <Card className="group overflow-hidden pt-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5">
+      <Link
+        href={editUrl}
+        className="relative block h-36 w-full overflow-hidden bg-[radial-gradient(circle_at_top,#fdf6ea,transparent_70%)] dark:bg-[radial-gradient(circle_at_top,#26221a,transparent_70%)]"
+      >
         {event.coverImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={event.coverImageUrl}
             alt=""
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-4xl">
-            🌿
+          <div className="flex h-full items-center justify-center text-primary/40 transition-transform duration-500 group-hover:scale-110">
+            <Leaf className="h-10 w-10" />
           </div>
         )}
 
         <Badge
-          variant={event.isPublished ? "default" : "outline"}
-          className="absolute top-3 end-3 bg-background/90"
+          variant="outline"
+          className={cn(
+            "absolute top-3 end-3 gap-1.5 border-transparent bg-background/90 backdrop-blur-sm",
+            event.isPublished ? "text-success" : "text-muted-foreground"
+          )}
         >
+          <span
+            className={cn(
+              "size-1.5 rounded-full",
+              event.isPublished ? "bg-success" : "bg-warning"
+            )}
+          />
           {event.isPublished ? "منشورة" : "مسودة"}
         </Badge>
-      </div>
+      </Link>
 
       <CardContent className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="font-heading text-lg">
+            <Link
+              href={editUrl}
+              className="font-heading text-lg transition-colors hover:text-primary"
+            >
               {event.brideName} &amp; {event.groomName}
-            </p>
+            </Link>
             <p className="text-xs text-muted-foreground">
               {STYLE_LABELS[event.style]}
             </p>
@@ -117,9 +135,7 @@ function EventCard({ event }: { event: EventSummary }) {
               <MoreVertical />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                render={<Link href={`/dashboard/events/${event.id}`} />}
-              >
+              <DropdownMenuItem render={<Link href={editUrl} />}>
                 <Pencil /> تعديل
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -142,23 +158,26 @@ function EventCard({ event }: { event: EventSummary }) {
 
         <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
           <p className="flex items-center gap-1.5">
-            <Calendar className="size-3.5" />
+            <Calendar className="size-3.5 shrink-0 text-primary/70" />
             {event.dateDisplay}
           </p>
           <p className="flex items-center gap-1.5">
-            <MapPin className="size-3.5" />
-            {event.venueName} — {event.city}
+            <MapPin className="size-3.5 shrink-0 text-primary/70" />
+            <span className="truncate">
+              {event.venueName} — {event.city}
+            </span>
           </p>
         </div>
 
         <div className="mt-1 flex gap-2">
           <Button
+          nativeButton={false} 
             variant="outline"
             size="sm"
             className="flex-1"
-            render={<Link href={`/dashboard/events/${event.id}`} />}
+            render={<Link href={editUrl} />}
           >
-            تعديل
+            <Pencil /> تعديل
           </Button>
           <Button
             variant="secondary"

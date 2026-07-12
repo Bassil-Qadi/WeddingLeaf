@@ -116,14 +116,19 @@ export function EventImages({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>الصور</CardTitle>
+        <CardTitle className="flex items-center gap-2.5">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <ImagePlus className="size-4" />
+          </span>
+          الصور
+        </CardTitle>
         <CardDescription>صورة الغلاف ومعرض صور الدعوة</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <div>
           <p className="mb-2 text-sm font-medium">صورة الغلاف</p>
           <div className="flex items-center gap-4">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted">
+            <div className="flex h-24 w-40 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted ring-1 ring-border">
               {coverImageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -161,14 +166,19 @@ export function EventImages({
             {galleryImages.map((url) => (
               <div
                 key={url}
-                className="group relative h-24 w-24 overflow-hidden rounded-xl bg-muted"
+                className="group relative h-24 w-24 overflow-hidden rounded-xl bg-muted ring-1 ring-border"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={url}
+                  alt=""
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
                 <button
                   type="button"
+                  aria-label="حذف الصورة"
                   onClick={() => removeGalleryImage(url)}
-                  className="absolute top-1 end-1 flex size-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
+                  className="absolute top-1 end-1 flex size-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-ring"
                 >
                   <X className="size-3.5" />
                 </button>
@@ -187,12 +197,15 @@ export function EventImages({
               type="button"
               disabled={isUploadingGallery}
               onClick={() => galleryInputRef.current?.click()}
-              className="flex h-24 w-24 items-center justify-center rounded-xl border border-dashed text-muted-foreground transition hover:text-foreground disabled:opacity-50"
+              className="flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-xl border border-dashed text-muted-foreground transition hover:border-primary/50 hover:bg-primary/5 hover:text-primary disabled:opacity-50"
             >
               {isUploadingGallery ? (
                 <Loader2 className="animate-spin" />
               ) : (
-                <ImagePlus />
+                <>
+                  <ImagePlus />
+                  <span className="text-[11px]">إضافة صور</span>
+                </>
               )}
             </button>
           </div>

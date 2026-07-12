@@ -44,9 +44,14 @@ export function DeleteEventCard({ eventId }: { eventId: string }) {
   }
 
   return (
-    <Card className="border-destructive/30">
+    <Card className="ring-destructive/25">
       <CardHeader>
-        <CardTitle className="text-destructive">منطقة الخطر</CardTitle>
+        <CardTitle className="flex items-center gap-2.5 text-destructive">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+            <Trash2 className="size-4" />
+          </span>
+          منطقة الخطر
+        </CardTitle>
         <CardDescription>حذف الدعوة إجراء لا يمكن التراجع عنه</CardDescription>
       </CardHeader>
       <CardContent>

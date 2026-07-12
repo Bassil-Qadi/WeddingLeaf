@@ -66,13 +66,14 @@ text-center
             transition={motionPreset.cinematic}
             className="mt-12 flex justify-center gap-5"
           >
-            <Button size="lg" render={<Link href="/auth/sign-up" />}>
+            <Button size="lg" nativeButton={false} render={<Link href="/auth/sign-up" />}>
               ابدأ الآن
             </Button>
 
             <Button
               variant="outline"
               size="lg"
+              nativeButton={false}
               render={<Link href="/i/sara-omar" />}
             >
               مشاهدة العرض

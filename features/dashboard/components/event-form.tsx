@@ -2,10 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import {
+  CalendarDays,
+  Clock,
+  Heart,
+  ListChecks,
+  Loader2,
+  MessageSquare,
+  Plus,
+  Trash2,
+} from "lucide-react";
 
 import { createEventSchema, type CreateEventInput } from "@/lib/validations/event";
 import { STYLE_OPTIONS } from "@/lib/wedding-styles";
@@ -22,6 +32,7 @@ import {
 } from "@/components/ui/select";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -49,6 +60,14 @@ const EMPTY_DEFAULTS: CreateEventInput = {
   schedule: [],
   message: "",
 };
+
+function SectionIcon({ icon: Icon }: { icon: typeof Heart }) {
+  return (
+    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+      <Icon className="size-4" />
+    </span>
+  );
+}
 
 export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
   const router = useRouter();
@@ -119,7 +138,10 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>معلومات العروسين</CardTitle>
+          <CardTitle className="flex items-center gap-2.5">
+            <SectionIcon icon={Heart} />
+            معلومات العروسين
+          </CardTitle>
           <CardDescription>الأسماء ونمط الدعوة والرابط العام</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-5 sm:grid-cols-2">
@@ -127,7 +149,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             <Label htmlFor="brideName">اسم العروس</Label>
             <Input id="brideName" {...register("brideName")} />
             {errors.brideName && (
-              <p className="text-xs text-destructive">
+              <p role="alert" className="text-xs text-destructive">
                 {errors.brideName.message}
               </p>
             )}
@@ -137,7 +159,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             <Label htmlFor="groomName">اسم العريس</Label>
             <Input id="groomName" {...register("groomName")} />
             {errors.groomName && (
-              <p className="text-xs text-destructive">
+              <p role="alert" className="text-xs text-destructive">
                 {errors.groomName.message}
               </p>
             )}
@@ -145,19 +167,29 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="slug">الرابط العام</Label>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">/i/</span>
+            <div className="flex" dir="ltr">
+              <span className="flex h-8 select-none items-center rounded-s-lg border border-e-0 border-input bg-muted px-2.5 text-sm text-muted-foreground">
+                /i/
+              </span>
               <Input
                 id="slug"
                 placeholder="sara-omar"
+                className="rounded-s-none"
                 disabled={mode === "edit"}
+                aria-invalid={Boolean(errors.slug)}
                 {...register("slug")}
               />
             </div>
-            {errors.slug && (
-              <p className="text-xs text-destructive">
-                {errors.slug.message}
+            {mode === "edit" ? (
+              <p className="text-xs text-muted-foreground">
+                لا يمكن تغيير الرابط بعد إنشاء الدعوة
               </p>
+            ) : (
+              errors.slug && (
+                <p role="alert" className="text-xs text-destructive">
+                  {errors.slug.message}
+                </p>
+              )
             )}
           </div>
 
@@ -187,7 +219,10 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>موعد ومكان الحفل</CardTitle>
+          <CardTitle className="flex items-center gap-2.5">
+            <SectionIcon icon={CalendarDays} />
+            موعد ومكان الحفل
+          </CardTitle>
           <CardDescription>التاريخ والقاعة والموقع</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-5 sm:grid-cols-2">
@@ -195,7 +230,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             <Label htmlFor="date">تاريخ الحفل</Label>
             <Input id="date" type="date" {...register("date")} />
             {errors.date && (
-              <p className="text-xs text-destructive">
+              <p role="alert" className="text-xs text-destructive">
                 {errors.date.message}
               </p>
             )}
@@ -209,7 +244,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
               {...register("dateDisplay")}
             />
             {errors.dateDisplay && (
-              <p className="text-xs text-destructive">
+              <p role="alert" className="text-xs text-destructive">
                 {errors.dateDisplay.message}
               </p>
             )}
@@ -219,7 +254,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             <Label htmlFor="city">المدينة</Label>
             <Input id="city" {...register("city")} />
             {errors.city && (
-              <p className="text-xs text-destructive">
+              <p role="alert" className="text-xs text-destructive">
                 {errors.city.message}
               </p>
             )}
@@ -229,7 +264,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             <Label htmlFor="venueName">اسم القاعة</Label>
             <Input id="venueName" {...register("venueName")} />
             {errors.venueName && (
-              <p className="text-xs text-destructive">
+              <p role="alert" className="text-xs text-destructive">
                 {errors.venueName.message}
               </p>
             )}
@@ -239,7 +274,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             <Label htmlFor="venueAddress">عنوان القاعة</Label>
             <Input id="venueAddress" {...register("venueAddress")} />
             {errors.venueAddress && (
-              <p className="text-xs text-destructive">
+              <p role="alert" className="text-xs text-destructive">
                 {errors.venueAddress.message}
               </p>
             )}
@@ -249,11 +284,12 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             <Label htmlFor="mapUrl">رابط خرائط جوجل</Label>
             <Input
               id="mapUrl"
+              dir="ltr"
               placeholder="https://maps.google.com/?q=..."
               {...register("mapUrl")}
             />
             {errors.mapUrl && (
-              <p className="text-xs text-destructive">
+              <p role="alert" className="text-xs text-destructive">
                 {errors.mapUrl.message}
               </p>
             )}
@@ -268,11 +304,12 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>برنامج الحفل</CardTitle>
-              <CardDescription>فقرات الحفل بالترتيب الزمني</CardDescription>
-            </div>
+          <CardTitle className="flex items-center gap-2.5">
+            <SectionIcon icon={ListChecks} />
+            برنامج الحفل
+          </CardTitle>
+          <CardDescription>فقرات الحفل بالترتيب الزمني</CardDescription>
+          <CardAction>
             <Button
               type="button"
               variant="outline"
@@ -281,20 +318,26 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             >
               <Plus /> إضافة فقرة
             </Button>
-          </div>
+          </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {fields.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              لم تتم إضافة أي فقرات بعد
-            </p>
+            <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed py-8 text-center">
+              <Clock className="size-5 text-muted-foreground/60" />
+              <p className="text-sm text-muted-foreground">
+                لم تتم إضافة أي فقرات بعد
+              </p>
+              <p className="text-xs text-muted-foreground/70">
+                مثال: ٨:٠٠ — استقبال الضيوف
+              </p>
+            </div>
           )}
 
           {fields.map((field, index) => (
             <div key={field.id} className="flex items-start gap-3">
               <Input
                 placeholder="٨:٠٠"
-                className="w-28"
+                className="w-28 text-center"
                 {...register(`schedule.${index}.time`)}
               />
               <Input
@@ -306,6 +349,8 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
                 type="button"
                 variant="ghost"
                 size="icon-sm"
+                aria-label="حذف الفقرة"
+                className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                 onClick={() => remove(index)}
               >
                 <Trash2 />
@@ -317,21 +362,45 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>رسالة الدعوة (اختياري)</CardTitle>
+          <CardTitle className="flex items-center gap-2.5">
+            <SectionIcon icon={MessageSquare} />
+            رسالة الدعوة (اختياري)
+          </CardTitle>
           <CardDescription>
             تظهر أسفل الأسماء في مقدمة الدعوة
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Textarea rows={3} {...register("message")} />
+          <Textarea
+            rows={3}
+            placeholder="بقلوب مليئة بالفرح، ندعوكم لمشاركتنا حفل زفافنا…"
+            {...register("message")}
+          />
         </CardContent>
       </Card>
 
-      <div className="flex justify-end gap-3">
-        <Button type="submit" size="lg" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="animate-spin" />}
-          {mode === "create" ? "إنشاء الدعوة" : "حفظ التغييرات"}
-        </Button>
+      <div className="sticky bottom-4 z-10 flex items-center justify-between gap-3 rounded-xl border bg-background/85 p-3 shadow-lg shadow-black/5 backdrop-blur-lg">
+        <p className="hidden text-xs text-muted-foreground sm:block">
+          {mode === "create"
+            ? "يمكنك إضافة الصور ونشر الدعوة بعد الإنشاء"
+            : "التغييرات تنعكس على الرابط العام مباشرة بعد الحفظ"}
+        </p>
+        <div className="flex flex-1 justify-end gap-3">
+          {mode === "create" && (
+            <Button
+              nativeButton={false}
+              variant="ghost"
+              size="lg"
+              render={<Link href="/dashboard" />}
+            >
+              إلغاء
+            </Button>
+          )}
+          <Button type="submit" size="lg" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="animate-spin" />}
+            {mode === "create" ? "إنشاء الدعوة" : "حفظ التغييرات"}
+          </Button>
+        </div>
       </div>
     </form>
   );
