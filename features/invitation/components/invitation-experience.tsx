@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 import type { InvitationData } from "../types";
 import { resolveInvitation } from "../lib/resolve-invitation";
@@ -9,6 +9,7 @@ import { Closing } from "./closing";
 import { GoldenThread } from "./golden-thread";
 import { Hero } from "./hero";
 import { Programme } from "./programme";
+import { Rsvp } from "./rsvp";
 import { SaveTheDate } from "./save-the-date";
 import { Story } from "./story";
 import { ThreadProvider, useThread } from "./thread-context";
@@ -20,8 +21,8 @@ const SCROLL_UNLOCK_MS = 1500;
 const SCROLL_UNLOCK_REDUCED_MS = 650;
 
 /**
- * The invitation, from the veil down to the knot. One continuous scroll, six
- * chapters, and a single gold thread running through all of them.
+ * The invitation, from the veil down to the knot. One continuous scroll and a
+ * single gold thread running through all of it.
  */
 export function InvitationExperience({
   invitation,
@@ -65,6 +66,83 @@ function Experience({ invitation }: { invitation: InvitationData }) {
     };
   }, [opened, reduceMotion]);
 
+  /**
+   * Not every invitation has every chapter — a couple who wrote no story gets
+   * no story chapter, and a wedding with RSVP switched off gets no form. Both
+   * the chapter numerals and the thread's waypoints have to stay contiguous
+   * regardless, so the chapters are assembled here and numbered as they go
+   * rather than hardcoding either count.
+   */
+  const chapters: ReactNode[] = [];
+  // The hero holds node 0; chapters are numbered from one.
+  let nodeIndex = 1;
+  let chapterNumber = 1;
+
+  const tellsStory = Boolean(data.story || data.couplePhotoUrl);
+  const asksRsvp = data.rsvpEnabled && (Boolean(data.guest) || data.allowOpenRsvp);
+
+  if (tellsStory) {
+    chapters.push(
+      <Story
+        key="story"
+        nodeIndex={nodeIndex++}
+        chapterNumber={chapterNumber++}
+        story={data.story}
+        photoUrl={data.couplePhotoUrl}
+      />,
+    );
+  }
+
+  chapters.push(
+    <SaveTheDate
+      key="save-the-date"
+      nodeIndex={nodeIndex++}
+      chapterNumber={chapterNumber++}
+      dateDayMonth={data.dateDayMonth}
+      dateYear={data.dateYear}
+      dateDetail={data.dateDetail}
+      dateISO={data.dateISO}
+    />,
+  );
+
+  if (data.schedule.length > 0) {
+    chapters.push(
+      <Programme
+        key="programme"
+        nodeIndex={nodeIndex++}
+        chapterNumber={chapterNumber++}
+        schedule={data.schedule}
+      />,
+    );
+  }
+
+  chapters.push(
+    <Venue
+      key="venue"
+      nodeIndex={nodeIndex++}
+      chapterNumber={chapterNumber++}
+      venueName={data.venueName}
+      venueAddress={data.venueAddress}
+      mapUrl={data.mapUrl}
+      photoUrl={data.venuePhotoUrl}
+    />,
+  );
+
+  if (asksRsvp) {
+    chapters.push(
+      <Rsvp
+        key="rsvp"
+        nodeIndex={nodeIndex++}
+        chapterNumber={chapterNumber++}
+        slug={data.slug}
+        guest={data.guest}
+        maxPartySize={data.maxPartySize}
+        allowOpenRsvp={data.allowOpenRsvp}
+        open={data.rsvpOpen}
+      />,
+    );
+  }
+
   return (
     <div className="gt relative min-h-screen w-full overflow-x-hidden">
       <Grain />
@@ -81,34 +159,17 @@ function Experience({ invitation }: { invitation: InvitationData }) {
           nodeIndex={0}
           brideName={data.brideName}
           groomName={data.groomName}
+          guestName={data.guest?.name}
           message={data.message}
           city={data.city}
           dateDisplay={data.dateDisplay}
           opened={opened}
         />
 
-        <Story nodeIndex={1} story={data.story} photoUrl={data.couplePhotoUrl} />
-
-        <SaveTheDate
-          nodeIndex={2}
-          dateDayMonth={data.dateDayMonth}
-          dateYear={data.dateYear}
-          dateDetail={data.dateDetail}
-          dateISO={data.dateISO}
-        />
-
-        <Programme nodeIndex={3} schedule={data.schedule} />
-
-        <Venue
-          nodeIndex={4}
-          venueName={data.venueName}
-          venueAddress={data.venueAddress}
-          mapUrl={data.mapUrl}
-          photoUrl={data.venuePhotoUrl}
-        />
+        {chapters}
 
         <Closing
-          nodeIndex={5}
+          nodeIndex={nodeIndex}
           brideName={data.brideName}
           groomName={data.groomName}
           monogram={data.monogram}
@@ -121,6 +182,7 @@ function Experience({ invitation }: { invitation: InvitationData }) {
       <Veil
         brideName={data.brideName}
         groomName={data.groomName}
+        guestName={data.guest?.name}
         monogram={data.monogram}
         dateDisplay={data.dateDisplay}
         opened={opened}

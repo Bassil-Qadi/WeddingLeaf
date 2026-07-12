@@ -6,10 +6,27 @@ export interface InvitationScheduleItem {
   title: string;
 }
 
+export type RsvpStatus = "pending" | "attending" | "declined";
+
+/**
+ * The guest this invitation was addressed to, when it was opened through a
+ * personal /i/<slug>/<token> link. Absent on the open link, which is what
+ * makes the invitation greet a stranger politely instead of by name.
+ */
+export interface InvitationGuest {
+  token: string;
+  name: string;
+  /** How many people this invitation admits — the stepper's ceiling. */
+  seats: number;
+  status: RsvpStatus;
+  partySize: number;
+  note: string | null;
+}
+
 /**
  * The plain, serializable shape the guest-facing invitation experience
  * consumes. Produced by `services/invitation.ts` from an Event document, or
- * by the bundled sample when there is no published event to render.
+ * by the bundled sample on the /demo route.
  *
  * Everything below `message` is optional: those fields exist so a couple can
  * enrich the invitation, and each has a sensible derivation from the
@@ -25,8 +42,10 @@ export interface InvitationData {
 
   /** ISO timestamp of the ceremony — the countdown target. */
   dateISO: string;
-  /** Display-ready Arabic date, e.g. "١٤ نوفمبر ٢٠٢٦". */
+  /** Display-ready Arabic date, e.g. "١٤ تشرين الثاني ٢٠٢٦". */
   dateDisplay: string;
+  /** Line under the big date, e.g. "يوم الجمعة · الساعة الثامنة مساءً". */
+  dateDetail: string;
 
   city: string;
   venueName: string;
@@ -44,8 +63,6 @@ export interface InvitationData {
 
   /** The "قصتنا" paragraph. */
   story?: string;
-  /** Line under the big date, e.g. "يوم الجمعة · الساعة الثامنة مساءً". */
-  dateDetail?: string;
   /** Shown on the closing knot, e.g. "+٩٦٦٥٠٠٠٠٠٠٠٠". */
   rsvpPhone?: string;
   /** Shown on the closing knot, e.g. "#سارة_و_عمر". */
@@ -55,6 +72,17 @@ export interface InvitationData {
   couplePhotoUrl?: string;
   /** Photo of the venue for chapter 04. */
   venuePhotoUrl?: string;
+
+  // --- RSVP ---
+  rsvpEnabled: boolean;
+  /** ISO instant after which the RSVP chapter goes read-only. */
+  rsvpDeadline: string | null;
+  /** Whether a visitor on the open link (no token) may answer at all. */
+  allowOpenRsvp: boolean;
+  /** Party-size ceiling for open responders; named guests use their `seats`. */
+  maxPartySize: number;
+  /** Present only when opened through a personal link. */
+  guest?: InvitationGuest;
 }
 
 /**
@@ -63,7 +91,6 @@ export interface InvitationData {
  * hashtag or a monogram is derived.
  */
 export interface ResolvedInvitation extends InvitationData {
-  story: string;
   hashtag: string;
   /** Two initials around a middot, bride first: "س · ع". */
   monogram: string;
@@ -72,6 +99,8 @@ export interface ResolvedInvitation extends InvitationData {
   dateYear: string;
   /** "١٤ · ١١ · ٢٠٢٦" for the closing signature. */
   dateNumeric: string;
+  /** False once the deadline has passed — the form renders, but read-only. */
+  rsvpOpen: boolean;
   couplePhotoUrl?: string;
   venuePhotoUrl?: string;
 }

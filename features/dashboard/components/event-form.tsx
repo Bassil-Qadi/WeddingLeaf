@@ -3,15 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useFieldArray, useForm, Controller } from "react-hook-form";
+import { useFieldArray, useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
+  BookHeart,
   CalendarDays,
   Clock,
   Heart,
   ListChecks,
   Loader2,
+  MailCheck,
   MessageSquare,
   Plus,
   Trash2,
@@ -19,9 +21,17 @@ import {
 
 import { createEventSchema, type CreateEventInput } from "@/lib/validations/event";
 import { STYLE_OPTIONS } from "@/lib/wedding-styles";
+import {
+  TIME_ZONE_OPTIONS,
+  defaultTimeZoneForStyle,
+  formatArabicDate,
+  formatArabicDateDetail,
+  zonedToUtc,
+} from "@/lib/date";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -51,7 +61,8 @@ const EMPTY_DEFAULTS: CreateEventInput = {
   groomName: "",
   brideName: "",
   date: "",
-  dateDisplay: "",
+  time: "20:00",
+  timeZone: "Asia/Amman",
   city: "",
   venueName: "",
   venueAddress: "",
@@ -59,6 +70,13 @@ const EMPTY_DEFAULTS: CreateEventInput = {
   dressCode: "",
   schedule: [],
   message: "",
+  story: "",
+  hashtag: "",
+  rsvpPhone: "",
+  rsvpEnabled: true,
+  rsvpDeadline: null,
+  allowOpenRsvp: true,
+  maxPartySize: 4,
 };
 
 function SectionIcon({ icon: Icon }: { icon: typeof Heart }) {
@@ -66,6 +84,15 @@ function SectionIcon({ icon: Icon }: { icon: typeof Heart }) {
     <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
       <Icon className="size-4" />
     </span>
+  );
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return (
+    <p role="alert" className="text-xs text-destructive">
+      {message}
+    </p>
   );
 }
 
@@ -77,6 +104,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
     register,
     control,
     handleSubmit,
+    setValue,
     setError,
     formState: { errors },
   } = useForm<CreateEventInput>({
@@ -88,6 +116,24 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
     control,
     name: "schedule",
   });
+
+  // The couple never types the Arabic date — they pick a day, an hour and a
+  // city, and see exactly what the invitation will print.
+  const [style, date, time, timeZone, rsvpEnabled] = useWatch({
+    control,
+    name: ["style", "date", "time", "timeZone", "rsvpEnabled"],
+  });
+
+  const preview =
+    date && time && timeZone
+      ? (() => {
+          const instant = zonedToUtc(date, time, timeZone);
+          return {
+            display: formatArabicDate(instant, style, timeZone),
+            detail: formatArabicDateDetail(instant, style, timeZone),
+          };
+        })()
+      : null;
 
   async function onSubmit(values: CreateEventInput) {
     setIsSubmitting(true);
@@ -148,21 +194,13 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="brideName">اسم العروس</Label>
             <Input id="brideName" {...register("brideName")} />
-            {errors.brideName && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.brideName.message}
-              </p>
-            )}
+            <FieldError message={errors.brideName?.message} />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="groomName">اسم العريس</Label>
             <Input id="groomName" {...register("groomName")} />
-            {errors.groomName && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.groomName.message}
-              </p>
-            )}
+            <FieldError message={errors.groomName?.message} />
           </div>
 
           <div className="flex flex-col gap-2">
@@ -185,11 +223,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
                 لا يمكن تغيير الرابط بعد إنشاء الدعوة
               </p>
             ) : (
-              errors.slug && (
-                <p role="alert" className="text-xs text-destructive">
-                  {errors.slug.message}
-                </p>
-              )
+              <FieldError message={errors.slug?.message} />
             )}
           </div>
 
@@ -199,7 +233,24 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
               control={control}
               name="style"
               render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    // The style says where the wedding is, which decides both the
+                    // timezone and whether the invitation prints "تشرين الثاني"
+                    // or "نوفمبر". Follow it, but never overwrite a deliberate
+                    // choice the couple already made on an existing event.
+                    if (mode === "create") {
+                      setValue(
+                        "timeZone",
+                        defaultTimeZoneForStyle(
+                          value as CreateEventInput["style"],
+                        ),
+                      );
+                    }
+                  }}
+                >
                   <SelectTrigger id="style" className="w-full">
                     <SelectValue placeholder="اختر النمط" />
                   </SelectTrigger>
@@ -229,23 +280,56 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="date">تاريخ الحفل</Label>
             <Input id="date" type="date" {...register("date")} />
-            {errors.date && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.date.message}
-              </p>
-            )}
+            <FieldError message={errors.date?.message} />
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="dateDisplay">التاريخ بصيغة العرض</Label>
-            <Input
-              id="dateDisplay"
-              placeholder="١٤ نوفمبر ٢٠٢٦"
-              {...register("dateDisplay")}
+            <Label htmlFor="time">ساعة البدء</Label>
+            <Input id="time" type="time" {...register("time")} />
+            <FieldError message={errors.time?.message} />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="timeZone">المنطقة الزمنية</Label>
+            <Controller
+              control={control}
+              name="timeZone"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="timeZone" className="w-full">
+                    <SelectValue placeholder="اختر المدينة" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_ZONE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
-            {errors.dateDisplay && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.dateDisplay.message}
+            <p className="text-xs text-muted-foreground">
+              يضبط العد التنازلي على التوقيت الصحيح
+            </p>
+          </div>
+
+          <div className="flex flex-col justify-center gap-1 rounded-xl border border-dashed bg-muted/40 px-4 py-3">
+            <p className="text-[11px] text-muted-foreground">
+              كما سيظهر في الدعوة
+            </p>
+            {preview ? (
+              <>
+                <p className="font-heading text-lg leading-tight">
+                  {preview.display}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {preview.detail}
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground/70">
+                اختر التاريخ والساعة
               </p>
             )}
           </div>
@@ -253,31 +337,19 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="city">المدينة</Label>
             <Input id="city" {...register("city")} />
-            {errors.city && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.city.message}
-              </p>
-            )}
+            <FieldError message={errors.city?.message} />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="venueName">اسم القاعة</Label>
             <Input id="venueName" {...register("venueName")} />
-            {errors.venueName && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.venueName.message}
-              </p>
-            )}
+            <FieldError message={errors.venueName?.message} />
           </div>
 
           <div className="flex flex-col gap-2 sm:col-span-2">
             <Label htmlFor="venueAddress">عنوان القاعة</Label>
             <Input id="venueAddress" {...register("venueAddress")} />
-            {errors.venueAddress && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.venueAddress.message}
-              </p>
-            )}
+            <FieldError message={errors.venueAddress?.message} />
           </div>
 
           <div className="flex flex-col gap-2 sm:col-span-2">
@@ -288,11 +360,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
               placeholder="https://maps.google.com/?q=..."
               {...register("mapUrl")}
             />
-            {errors.mapUrl && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.mapUrl.message}
-              </p>
-            )}
+            <FieldError message={errors.mapUrl?.message} />
           </div>
 
           <div className="flex flex-col gap-2 sm:col-span-2">
@@ -363,6 +431,138 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2.5">
+            <SectionIcon icon={BookHeart} />
+            قصتكما
+          </CardTitle>
+          <CardDescription>
+            الفصل الذي يرويه الضيوف قبل كل شيء — بكلماتكما أنتما
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <Textarea
+              rows={4}
+              placeholder="التقينا في مساءٍ عاديّ لم يكن يعرف أنه سيغيّر كل ما بعده…"
+              {...register("story")}
+            />
+            <p className="text-xs text-muted-foreground">
+              إن تركتموها فارغة، لن يظهر فصل «قصتنا» في الدعوة
+            </p>
+            <FieldError message={errors.story?.message} />
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="hashtag">وسم الزفاف (اختياري)</Label>
+              <Input
+                id="hashtag"
+                placeholder="#سارة_و_عمر"
+                {...register("hashtag")}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="rsvpPhone">رقم للتواصل (اختياري)</Label>
+              <Input
+                id="rsvpPhone"
+                dir="ltr"
+                placeholder="+962 79 000 0000"
+                {...register("rsvpPhone")}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2.5">
+            <SectionIcon icon={MailCheck} />
+            تأكيد الحضور
+          </CardTitle>
+          <CardDescription>
+            كيف يؤكّد ضيوفكم حضورهم من داخل الدعوة
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          <Controller
+            control={control}
+            name="rsvpEnabled"
+            render={({ field }) => (
+              <label className="flex items-center justify-between gap-4 rounded-xl border p-4">
+                <span>
+                  <span className="block text-sm font-medium">
+                    تفعيل تأكيد الحضور
+                  </span>
+                  <span className="block text-xs text-muted-foreground">
+                    يضيف فصل «تأكيد الحضور» إلى الدعوة
+                  </span>
+                </span>
+                <Switch
+                  checked={field.value ?? true}
+                  onCheckedChange={field.onChange}
+                />
+              </label>
+            )}
+          />
+
+          {rsvpEnabled !== false && (
+            <>
+              <Controller
+                control={control}
+                name="allowOpenRsvp"
+                render={({ field }) => (
+                  <label className="flex items-center justify-between gap-4 rounded-xl border p-4">
+                    <span>
+                      <span className="block text-sm font-medium">
+                        السماح بالرد من الرابط العام
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        أوقفوه إن أردتم قبول ردود المدعوّين بالاسم فقط
+                      </span>
+                    </span>
+                    <Switch
+                      checked={field.value ?? true}
+                      onCheckedChange={field.onChange}
+                    />
+                  </label>
+                )}
+              />
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="rsvpDeadline">آخر موعد للرد (اختياري)</Label>
+                  <Input
+                    id="rsvpDeadline"
+                    type="date"
+                    {...register("rsvpDeadline")}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="maxPartySize">
+                    أقصى عدد مرافقين للرد العام
+                  </Label>
+                  <Input
+                    id="maxPartySize"
+                    type="number"
+                    min={1}
+                    max={20}
+                    {...register("maxPartySize", { valueAsNumber: true })}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    المدعوّون بالاسم محدودون بعدد مقاعدهم
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2.5">
             <SectionIcon icon={MessageSquare} />
             رسالة الدعوة (اختياري)
           </CardTitle>
@@ -382,7 +582,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
       <div className="sticky bottom-4 z-10 flex items-center justify-between gap-3 rounded-xl border bg-background/85 p-3 shadow-lg shadow-black/5 backdrop-blur-lg">
         <p className="hidden text-xs text-muted-foreground sm:block">
           {mode === "create"
-            ? "يمكنك إضافة الصور ونشر الدعوة بعد الإنشاء"
+            ? "يمكنك إضافة الصور والضيوف ونشر الدعوة بعد الإنشاء"
             : "التغييرات تنعكس على الرابط العام مباشرة بعد الحفظ"}
         </p>
         <div className="flex flex-1 justify-end gap-3">

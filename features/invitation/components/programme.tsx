@@ -1,22 +1,32 @@
 import type { InvitationScheduleItem } from "../types";
+import { toArabicPadded } from "../lib/arabic";
 import { Chapter, ChapterHeading, ChapterWatermark } from "./chapter";
 import { Reveal } from "./reveal";
 import { ThreadNode } from "./thread-node";
 
 interface ProgrammeProps {
   schedule: InvitationScheduleItem[];
+  chapterNumber: number;
   nodeIndex: number;
 }
 
 /** ٠٣ · برنامج الحفل — the evening, hour by hour. */
-export function Programme({ schedule, nodeIndex }: ProgrammeProps) {
+export function Programme({
+  schedule,
+  chapterNumber,
+  nodeIndex,
+}: ProgrammeProps) {
   return (
     <Chapter className="justify-start py-[14vh] ps-[68px] pe-1.5">
-      <ChapterWatermark numeral="3" />
+      <ChapterWatermark numeral={String(chapterNumber)} />
       <ThreadNode index={nodeIndex} className="start-[26px] top-1/2" />
 
       <div className="relative z-[1] ms-auto w-full max-w-[460px] text-start">
-        <ChapterHeading index="٠٣" title="برنامج الحفل" className="mb-7" />
+        <ChapterHeading
+          index={toArabicPadded(chapterNumber)}
+          title="برنامج الحفل"
+          className="mb-7"
+        />
 
         <Reveal delay={0.2} className="flex flex-col">
           {schedule.map((item, index) => (

@@ -28,6 +28,8 @@ interface HeroProps {
   groomName: string;
   /** Node index on the thread — the hero holds the origin knot. */
   nodeIndex: number;
+  /** Set when the invitation was opened through a personal link. */
+  guestName?: string;
   message?: string;
   city: string;
   dateDisplay: string;
@@ -38,6 +40,7 @@ export function Hero({
   brideName,
   groomName,
   nodeIndex,
+  guestName,
   message,
   city,
   dateDisplay,
@@ -69,7 +72,7 @@ export function Hero({
         variants={entrance(0, 1.1)}
         className="relative z-[1] mb-[26px] text-xs [word-spacing:0.5em] text-gt-gold/95"
       >
-        بطاقة دعوة
+        {guestName ? `دعوة خاصة لـ ${guestName}` : "بطاقة دعوة"}
       </motion.div>
 
       <motion.h1

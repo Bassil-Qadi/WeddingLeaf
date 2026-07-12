@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toArabicPadded } from "../lib/arabic";
 import { Chapter, ChapterHeading } from "./chapter";
 import { PhotoFrame } from "./photo-frame";
 import { Reveal } from "./reveal";
@@ -10,6 +11,7 @@ interface VenueProps {
   venueAddress: string;
   mapUrl: string;
   photoUrl?: string;
+  chapterNumber: number;
   nodeIndex: number;
 }
 
@@ -19,6 +21,7 @@ export function Venue({
   venueAddress,
   mapUrl,
   photoUrl,
+  chapterNumber,
   nodeIndex,
 }: VenueProps) {
   return (
@@ -26,7 +29,11 @@ export function Venue({
       <ThreadNode index={nodeIndex} className="start-[44px] top-1/2" />
 
       <div className="relative z-[1] ms-auto w-full max-w-[520px] text-start">
-        <ChapterHeading index="٠٤" title="المكان" className="mb-2.5" />
+        <ChapterHeading
+          index={toArabicPadded(chapterNumber)}
+          title="المكان"
+          className="mb-2.5"
+        />
 
         <Reveal delay={0.2}>
           <p className="mb-1.5 text-[clamp(19px,5.4vw,24px)] text-gt-ink">

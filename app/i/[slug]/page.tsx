@@ -1,55 +1,42 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
 import { InvitationExperience } from "@/features/invitation/components/invitation-experience";
-import { SAMPLE_INVITATION } from "@/features/invitation/data/sample-invitation";
-import type { InvitationData } from "@/features/invitation/types";
 import { getInvitationBySlug } from "@/services/invitation";
+import { invitationMetadata } from "@/features/invitation/lib/metadata";
 import { auth } from "@/lib/auth";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-/**
- * Fall back to the sample so the experience is viewable before the DB is
- * seeded / for local design preview. A real published invitation always wins
- * over the sample. `viewerId` lets the owner preview their own unpublished
- * draft — see services/invitation.ts.
- */
-async function loadInvitation(
-  slug: string,
-  viewerId?: string,
-): Promise<InvitationData> {
-  return (await getInvitationBySlug(slug, viewerId)) ?? SAMPLE_INVITATION;
-}
-
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const invitation = await loadInvitation(slug);
+  const invitation = await getInvitationBySlug(slug);
 
-  const title = `${invitation.groomName} و ${invitation.brideName} — دعوة زفاف`;
-  const description =
-    invitation.message ??
-    `يسعدنا دعوتكم لحضور حفل زفاف ${invitation.groomName} و ${invitation.brideName}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      locale: "ar_JO",
-      images: invitation.coverImageUrl ? [invitation.coverImageUrl] : undefined,
-    },
-  };
+  return invitationMetadata(invitation);
 }
 
+/**
+ * The open invitation — the link a couple shares in a family group. Guests who
+ * arrive here are greeted as guests rather than by name; the named version
+ * lives at /i/[slug]/[token].
+ *
+ * A slug that resolves to nothing is a 404. It deliberately does *not* fall
+ * back to a sample invitation: a stranger typing a URL, or a guest following a
+ * link to an event that was unpublished or deleted, must not be shown a
+ * complete and convincing wedding that isn't real.
+ */
 export default async function InvitationPage({ params }: PageProps) {
   const { slug } = await params;
   const session = await auth();
-  const invitation = await loadInvitation(slug, session?.user?.id);
+  const invitation = await getInvitationBySlug(slug, session?.user?.id);
+
+  if (!invitation) {
+    notFound();
+  }
 
   return (
     <main className="flex-1">

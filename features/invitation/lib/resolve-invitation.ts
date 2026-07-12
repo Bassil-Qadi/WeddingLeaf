@@ -1,9 +1,6 @@
 import type { InvitationData, ResolvedInvitation } from "../types";
 import { toArabicDigits } from "./arabic";
 
-const DEFAULT_STORY =
-  "بدأت الحكاية بمصادفةٍ لطيفة، وكبرت مع كلّ لحظةٍ جمعتنا. اخترنا أن نُكمل الطريق معًا، وأن يكون حبّنا وعدًا يتجدّد في كلّ صباح.";
-
 const firstLetter = (name: string) => Array.from(name.trim())[0] ?? "";
 
 /**
@@ -41,14 +38,21 @@ export function resolveInvitation(
   const { brideName, groomName, dateDisplay, dateISO } = invitation;
   const [dateDayMonth, dateYear] = splitDateDisplay(dateDisplay);
 
+  const pastDeadline =
+    invitation.rsvpDeadline !== null &&
+    Date.now() > new Date(invitation.rsvpDeadline).getTime();
+
   return {
     ...invitation,
-    story: invitation.story ?? DEFAULT_STORY,
+    // Deliberately no fallback story. A stock paragraph is worse than none:
+    // it reads as the couple's own words, and every couple gets the same ones.
+    // The experience drops the chapter instead — see `invitation-experience`.
     hashtag: invitation.hashtag ?? `#${brideName}_و_${groomName}`,
     monogram: `${firstLetter(brideName)} · ${firstLetter(groomName)}`,
     dateDayMonth,
     dateYear,
     dateNumeric: toNumericSignature(dateISO),
+    rsvpOpen: invitation.rsvpEnabled && !pastDeadline,
     couplePhotoUrl:
       invitation.couplePhotoUrl ??
       invitation.coverImageUrl ??

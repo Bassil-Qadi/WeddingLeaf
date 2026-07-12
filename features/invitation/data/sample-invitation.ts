@@ -1,9 +1,12 @@
 import type { InvitationData } from "../types";
 
 /**
- * The invitation the design was cut against. Rendered at /i/[slug] when no
- * published event matches the slug, so the experience stays viewable before
- * the database is seeded and in local design preview.
+ * The invitation the design was cut against. Rendered at /demo only.
+ *
+ * It is deliberately not reachable from /i/[slug]: an unknown slug 404s rather
+ * than falling back to this, so no visitor is ever shown a wedding that isn't
+ * real. Keep it in sync with `InvitationData` — it doubles as the fixture the
+ * chapters are designed against.
  */
 export const SAMPLE_INVITATION: InvitationData = {
   slug: "sara-omar",
@@ -12,9 +15,9 @@ export const SAMPLE_INVITATION: InvitationData = {
   brideName: "سارة",
   groomName: "عمر",
 
-  dateISO: "2026-11-14T20:00:00+03:00",
+  dateISO: "2026-11-14T17:00:00.000Z",
   dateDisplay: "١٤ نوفمبر ٢٠٢٦",
-  dateDetail: "يوم الجمعة · الساعة الثامنة مساءً",
+  dateDetail: "يوم السبت · الساعة الثامنة مساءً",
 
   city: "الرياض",
   venueName: "قاعة الأندلس للاحتفالات",
@@ -32,5 +35,12 @@ export const SAMPLE_INVITATION: InvitationData = {
   galleryImages: [],
 
   message: "يتشرّفان بدعوتكم لمشاركتهما فرحة العمر",
+  story:
+    "التقينا في مساءٍ عاديّ لم يكن يعرف أنه سيغيّر كل ما بعده. كبرت الحكاية على مهلٍ، بين ضحكةٍ وموعدٍ ووعد، حتى صار البقاء معًا هو القرار الوحيد الذي يشبهنا.",
   rsvpPhone: "‪+٩٦٦٥٠٠٠٠٠٠٠٠‬",
+
+  rsvpEnabled: true,
+  rsvpDeadline: null,
+  allowOpenRsvp: true,
+  maxPartySize: 4,
 };

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Users } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { getEventForOwner } from "@/services/events";
 import { STYLE_LABELS } from "@/lib/wedding-styles";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { PublishToggle } from "@/features/dashboard/components/publish-toggle";
 import { EventImages } from "@/features/dashboard/components/event-images";
 import { EventForm } from "@/features/dashboard/components/event-form";
@@ -55,6 +56,15 @@ export default async function EditEventPage({ params }: PageProps) {
             آخر تحديث {new Date(event.updatedAt).toLocaleDateString("ar")}
           </p>
         </div>
+
+        <Button
+          nativeButton={false}
+          variant="outline"
+          render={<Link href={`/dashboard/events/${event.id}/guests`} />}
+        >
+          <Users data-icon="inline-start" />
+          قائمة الضيوف
+        </Button>
       </div>
 
       <PublishToggle
@@ -78,7 +88,8 @@ export default async function EditEventPage({ params }: PageProps) {
           groomName: event.groomName,
           brideName: event.brideName,
           date: event.date,
-          dateDisplay: event.dateDisplay,
+          time: event.time,
+          timeZone: event.timeZone,
           city: event.city,
           venueName: event.venueName,
           venueAddress: event.venueAddress,
@@ -86,6 +97,13 @@ export default async function EditEventPage({ params }: PageProps) {
           dressCode: event.dressCode,
           schedule: event.schedule,
           message: event.message,
+          story: event.story,
+          hashtag: event.hashtag,
+          rsvpPhone: event.rsvpPhone,
+          rsvpEnabled: event.rsvpEnabled,
+          rsvpDeadline: event.rsvpDeadline,
+          allowOpenRsvp: event.allowOpenRsvp,
+          maxPartySize: event.maxPartySize,
         }}
       />
 

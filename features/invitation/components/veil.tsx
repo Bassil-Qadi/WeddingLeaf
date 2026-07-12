@@ -59,6 +59,8 @@ const sealVariants: Variants = {
 interface VeilProps {
   brideName: string;
   groomName: string;
+  /** Set when the invitation was opened through a personal link. */
+  guestName?: string;
   monogram: string;
   dateDisplay: string;
   opened: boolean;
@@ -73,6 +75,7 @@ interface VeilProps {
 export function Veil({
   brideName,
   groomName,
+  guestName,
   monogram,
   dateDisplay,
   opened,
@@ -122,6 +125,14 @@ export function Veil({
             </span>
           </div>
         </motion.div>
+
+        {/* An invitation in this culture is addressed, not broadcast: when we
+            know who is holding it, the veil says their name before it lifts. */}
+        {guestName && (
+          <p className="mb-2 text-[15px] font-light text-gt-ink/70">
+            إلى <span className="text-gt-ink">{guestName}</span>
+          </p>
+        )}
 
         <p className="mb-3.5 text-xs [word-spacing:0.34em] text-gt-gold/95">
           أنتم مدعوّون لحضور حفل زفاف
