@@ -78,10 +78,10 @@ export function Topbar({ userName, userEmail }: TopbarProps) {
                 </span>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="center">
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel className='p-4'>
-                    <p className="font-medium text-foreground">{userName}</p>
+                  <DropdownMenuLabel>
+                    <p className="font-medium text-foreground" dir="ltr">{userName}</p>
                     <p
                       dir="ltr"
                       className="break-all text-start text-xs font-normal text-muted-foreground"
@@ -94,10 +94,11 @@ export function Topbar({ userName, userEmail }: TopbarProps) {
 
                   <DropdownMenuItem
                     variant="destructive"
+                    dir="ltr"
                     onClick={() => signOut({ callbackUrl: "/" })}
                   >
-                    <LogOut />
                     تسجيل الخروج
+                    <LogOut />
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
