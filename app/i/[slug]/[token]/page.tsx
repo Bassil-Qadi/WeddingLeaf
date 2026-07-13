@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { InvitationExperience } from "@/features/invitation/components/invitation-experience";
-import { getInvitationForGuest } from "@/services/invitation";
+import {
+  getInvitationForGuest,
+  markInvitationOpened,
+} from "@/services/invitation";
 import { invitationMetadata } from "@/features/invitation/lib/metadata";
 import { auth } from "@/lib/auth";
+import { isCrawler } from "@/lib/crawler";
 
 interface PageProps {
   params: Promise<{ slug: string; token: string }>;
@@ -36,6 +41,14 @@ export default async function GuestInvitationPage({ params }: PageProps) {
 
   if (!invitation) {
     notFound();
+  }
+
+  // Only a human opening the invitation counts as an open. WhatsApp fetches this
+  // very page to build its preview card the moment the link is *sent*, and the
+  // couple previewing a guest's link isn't that guest.
+  const userAgent = (await headers()).get("user-agent");
+  if (!isCrawler(userAgent)) {
+    await markInvitationOpened(slug, token, session?.user?.id);
   }
 
   return (

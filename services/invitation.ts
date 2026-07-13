@@ -76,11 +76,17 @@ export async function getInvitationBySlug(
 }
 
 /**
- * The same invitation, addressed to the guest behind `token`, and stamped as
- * opened. A token that doesn't belong to this event resolves to `null` so the
- * route can 404 rather than silently degrading to the anonymous invitation —
- * a guest following a link from their own WhatsApp should never be greeted as
- * a stranger, and if they are, something is wrong and we want to know.
+ * The same invitation, addressed to the guest behind `token`. A token that
+ * doesn't belong to this event resolves to `null` so the route can 404 rather
+ * than silently degrading to the anonymous invitation — a guest following a
+ * link from their own WhatsApp should never be greeted as a stranger, and if
+ * they are, something is wrong and we want to know.
+ *
+ * This is a pure read. Recording the open is {@link markInvitationOpened}, and
+ * they are separate on purpose: this function is called from `generateMetadata`
+ * as well as from the page, and `generateMetadata` is exactly what a link
+ * crawler fetches. Stamping here meant WhatsApp marked an invitation "opened"
+ * at the moment it was *sent*, before the guest had so much as seen it.
  */
 export async function getInvitationForGuest(
   slug: string,
@@ -101,8 +107,6 @@ export async function getInvitationForGuest(
   const invitation = await getInvitationBySlug(slug, viewerId);
   if (!invitation) return null;
 
-  await markGuestOpened(eventId, token);
-
   return {
     ...invitation,
     guest: {
@@ -114,6 +118,34 @@ export async function getInvitationForGuest(
       note: guest.note,
     },
   };
+}
+
+/**
+ * Record that a guest actually opened their invitation.
+ *
+ * Called only from the page, and only for a real human — see `isCrawler`. This
+ * is the top of the funnel the couple will be shown, so a false open is not a
+ * cosmetic problem: it is the difference between "nobody has looked at it yet,
+ * go chase them" and "they have all seen it and are ignoring you".
+ *
+ * The couple previewing their own guest's link is not an open either, which is
+ * why this needs to know who is asking.
+ */
+export async function markInvitationOpened(
+  slug: string,
+  token: string,
+  viewerId?: string,
+): Promise<void> {
+  await connectToDatabase();
+
+  const doc = await Event.findOne({ slug: slug.toLowerCase() })
+    .select("_id ownerId")
+    .lean();
+  if (!doc) return;
+
+  if (viewerId && doc.ownerId.toString() === viewerId) return;
+
+  await markGuestOpened(doc._id.toString(), token);
 }
 
 /** The RSVP endpoint is addressed by slug; the guest service works in ids. */
