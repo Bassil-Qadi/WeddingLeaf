@@ -1,5 +1,24 @@
 import { z } from "zod";
 
+/**
+ * How many open-link responses an event accepts before it stops taking them.
+ *
+ * The open RSVP endpoint is public and unauthenticated by design — that is what
+ * "open" means — and it *creates* a guest row. Without a ceiling, anyone who
+ * knows a published slug can script a loop and append rows forever, poisoning
+ * the single number the couple is paying us for. Rate limiting slows that down;
+ * only a cap bounds it.
+ *
+ * 300 sits above a realistic open-link wedding and well below the point where
+ * the damage gets interesting. A couple expecting more than that should be
+ * naming their guests, which is the path that has tokens.
+ *
+ * It lives here rather than beside the schema in `models/Event` because the
+ * event form needs it too, and that is a client component — importing the model
+ * would pull mongoose into the browser bundle.
+ */
+export const DEFAULT_OPEN_RSVP_LIMIT = 300;
+
 export const scheduleItemSchema = z.object({
   time: z.string().min(1, { message: "الوقت مطلوب" }),
   title: z.string().min(1, { message: "عنوان الفقرة مطلوب" }),
@@ -50,6 +69,7 @@ export const createEventSchema = z.object({
   rsvpDeadline: z.string().nullable().optional(),
   allowOpenRsvp: z.boolean().optional(),
   maxPartySize: z.number().int().min(1).max(20).optional(),
+  openRsvpLimit: z.number().int().min(0).max(2000).optional(),
 });
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;

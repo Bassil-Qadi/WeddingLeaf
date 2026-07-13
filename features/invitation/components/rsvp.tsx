@@ -27,6 +27,55 @@ interface RsvpProps {
 type Answer = Exclude<RsvpStatus, "pending">;
 
 /**
+ * The token an open-link responder was issued, remembered on their own device.
+ *
+ * A named guest needs none of this — their token is in the URL they arrived on.
+ * An open responder has no such handle, so without something to hold, every
+ * reload-and-answer-again would take the *create* branch on the server and
+ * append a second row, quietly inflating the confirmed headcount.
+ */
+interface StoredRsvp {
+  token: string;
+  name: string;
+}
+
+const STORAGE_PREFIX = "weddingleaf:rsvp:";
+
+/**
+ * The stored token, but only if the person at the keyboard is the one it was
+ * issued to.
+ *
+ * The name is an open responder's only identity, so it is what we check. This
+ * is what keeps a phone passed around a family honest: when أحمد answers and
+ * then hands the phone to سارة, she types her own name, it doesn't match, and
+ * she gets a row of her own instead of silently overwriting his.
+ */
+function reusableToken(slug: string, typedName: string): string | undefined {
+  try {
+    const raw = window.localStorage.getItem(`${STORAGE_PREFIX}${slug}`);
+    if (!raw) return undefined;
+
+    const stored = JSON.parse(raw) as StoredRsvp;
+    return stored?.name === typedName ? stored.token : undefined;
+  } catch {
+    // Private browsing throws on access, and a malformed blob isn't worth a
+    // crash. A duplicate row is survivable; a broken invitation is not.
+    return undefined;
+  }
+}
+
+function writeStored(slug: string, value: StoredRsvp): void {
+  try {
+    window.localStorage.setItem(
+      `${STORAGE_PREFIX}${slug}`,
+      JSON.stringify(value),
+    );
+  } catch {
+    // As above — best effort.
+  }
+}
+
+/**
  * ٠٥ · تأكيد الحضور — the one chapter that writes back.
  *
  * A named guest's row already exists, so the form updates it in place and can
@@ -60,12 +109,18 @@ export function Rsvp({
   );
   const [error, setError] = useState<string | null>(null);
 
+  /** Issued to an open responder on their first answer, within this session. */
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
+
   async function submit() {
     if (!answer) {
       setError("اختر الحضور أو الاعتذار");
       return;
     }
-    if (!guest && name.trim().length < 2) {
+
+    const typed = name.trim();
+
+    if (!guest && typed.length < 2) {
       setError("الرجاء كتابة الاسم");
       return;
     }
@@ -74,22 +129,33 @@ export function Rsvp({
     setError(null);
 
     try {
+      const claimed = answer === "attending" ? partySize : 0;
+      const token = guest?.token ?? sessionToken ?? reusableToken(slug, typed);
+
       const response = await fetch(`/api/i/${slug}/rsvp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          token: guest?.token,
-          name: guest ? undefined : name.trim(),
+          token,
+          name: guest ? undefined : typed,
           status: answer,
-          partySize: answer === "attending" ? partySize : 0,
+          partySize: claimed,
           note: note.trim() || undefined,
         }),
       });
 
+      const body = await response.json().catch(() => null);
+
       if (!response.ok) {
-        const body = await response.json().catch(() => null);
         setError(body?.error ?? "تعذّر إرسال التأكيد، حاولوا مرة أخرى");
         return;
+      }
+
+      // Hold on to the token an open responder was just issued, so a later
+      // visit revises this answer instead of filing another one.
+      if (!guest && body?.guest?.token) {
+        setSessionToken(body.guest.token);
+        writeStored(slug, { token: body.guest.token, name: typed });
       }
 
       setSubmitted(true);

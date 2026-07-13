@@ -15,10 +15,11 @@ import {
  * the number the couple actually cares about (confirmed seats, which is what
  * the venue bills against) is then a single sum over this collection.
  *
- * Guests the couple typed in have `source: "list"` and a `token` that
- * addresses their personal invitation at /i/<slug>/<token>. Guests who found
- * the open link and answered on it have `source: "open"` and no token — they
- * still land in the same table so the headcount stays whole.
+ * Guests the couple typed in have `source: "list"` and seats the couple granted
+ * them. Guests who found the open link and answered on it have `source: "open"`
+ * and are capped by the event's own ceiling instead — they still land in the
+ * same table so the headcount stays whole. Both kinds carry a `token`; see the
+ * field for why that is not optional.
  */
 const GuestSchema = new Schema(
   {
@@ -40,13 +41,28 @@ const GuestSchema = new Schema(
      */
     seats: { type: Number, default: 1, min: 1, max: 20 },
 
-    /** Addresses the personal invitation. Absent for open-link responders. */
+    /**
+     * Addresses this guest's invitation at /i/<slug>/<token>. Every guest has
+     * one, including open-link responders, and it is `required` for a reason.
+     *
+     * The index is `sparse`, and a sparse index skips documents where the field
+     * is *absent* — not where it is `null`. So a schema default of `null` would
+     * put a literal null in a *unique* index, and the second guest to be written
+     * without a token would collide with the first and blow up with a duplicate
+     * key error. That is not hypothetical: it is the same defect that was found
+     * in the `users` collection (a stale `id_1` index over an always-null field,
+     * which had silently limited the entire database to one user), and it was
+     * reproduced here — open-link RSVP worked exactly once, then 500'd forever.
+     *
+     * `required` is what closes it: there is now no way to write a guest without
+     * a token, so no null ever reaches the index.
+     */
     token: {
       type: String,
+      required: true,
       unique: true,
       sparse: true,
       index: true,
-      default: null,
     },
 
     status: {

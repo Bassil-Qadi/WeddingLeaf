@@ -9,7 +9,11 @@ import {
   toTimeInputValue,
   zonedToUtc,
 } from "@/lib/date";
-import type { CreateEventInput, UpdateEventInput } from "@/lib/validations/event";
+import {
+  DEFAULT_OPEN_RSVP_LIMIT,
+  type CreateEventInput,
+  type UpdateEventInput,
+} from "@/lib/validations/event";
 import type { WeddingStyle } from "@/types/invitation";
 
 export interface EventSummary {
@@ -48,6 +52,7 @@ export interface EventDetail extends EventSummary {
   rsvpDeadline: string | null;
   allowOpenRsvp: boolean;
   maxPartySize: number;
+  openRsvpLimit: number;
 }
 
 interface EventLeanDoc {
@@ -78,6 +83,8 @@ interface EventLeanDoc {
   rsvpDeadline?: Date | null;
   allowOpenRsvp?: boolean;
   maxPartySize?: number;
+  /** Absent on events written before the field existed. */
+  openRsvpLimit?: number;
   isPublished: boolean;
   updatedAt: Date;
 }
@@ -130,6 +137,7 @@ function toDetail(doc: EventLeanDoc): EventDetail {
       : null,
     allowOpenRsvp: doc.allowOpenRsvp ?? true,
     maxPartySize: doc.maxPartySize ?? 4,
+    openRsvpLimit: doc.openRsvpLimit ?? DEFAULT_OPEN_RSVP_LIMIT,
   };
 }
 

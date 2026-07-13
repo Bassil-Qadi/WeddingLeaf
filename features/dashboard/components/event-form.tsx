@@ -19,7 +19,11 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { createEventSchema, type CreateEventInput } from "@/lib/validations/event";
+import {
+  createEventSchema,
+  DEFAULT_OPEN_RSVP_LIMIT,
+  type CreateEventInput,
+} from "@/lib/validations/event";
 import { STYLE_OPTIONS } from "@/lib/wedding-styles";
 import {
   TIME_ZONE_OPTIONS,
@@ -77,6 +81,7 @@ const EMPTY_DEFAULTS: CreateEventInput = {
   rsvpDeadline: null,
   allowOpenRsvp: true,
   maxPartySize: 4,
+  openRsvpLimit: DEFAULT_OPEN_RSVP_LIMIT,
 };
 
 function SectionIcon({ icon: Icon }: { icon: typeof Heart }) {
@@ -119,9 +124,16 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
 
   // The couple never types the Arabic date — they pick a day, an hour and a
   // city, and see exactly what the invitation will print.
-  const [style, date, time, timeZone, rsvpEnabled] = useWatch({
+  const [style, date, time, timeZone, rsvpEnabled, allowOpenRsvp] = useWatch({
     control,
-    name: ["style", "date", "time", "timeZone", "rsvpEnabled"],
+    name: [
+      "style",
+      "date",
+      "time",
+      "timeZone",
+      "rsvpEnabled",
+      "allowOpenRsvp",
+    ],
   });
 
   const preview =
@@ -554,6 +566,25 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
                     المدعوّون بالاسم محدودون بعدد مقاعدهم
                   </p>
                 </div>
+
+                {allowOpenRsvp !== false && (
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="openRsvpLimit">
+                      أقصى عدد للردود العامة
+                    </Label>
+                    <Input
+                      id="openRsvpLimit"
+                      type="number"
+                      min={0}
+                      max={2000}
+                      {...register("openRsvpLimit", { valueAsNumber: true })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      حدٌّ يحمي قائمتكم من الردود العشوائية. لا يشمل المدعوّين
+                      بالاسم
+                    </p>
+                  </div>
+                )}
               </div>
             </>
           )}

@@ -6,6 +6,8 @@ import {
     type Model,
   } from "mongoose";
 
+  import { DEFAULT_OPEN_RSVP_LIMIT } from "@/lib/validations/event";
+
   const ScheduleItemSchema = new Schema(
     {
       time: { type: String, required: true },
@@ -84,6 +86,15 @@ import {
       // Ceiling for the party-size stepper on open RSVPs. Named guests are
       // capped by their own `seats` allowance instead.
       maxPartySize: { type: Number, default: 4, min: 1, max: 20 },
+      // How many open-link rows this event will accept in total — see
+      // DEFAULT_OPEN_RSVP_LIMIT above. Named guests don't count against it:
+      // they already exist, so answering only updates a row.
+      openRsvpLimit: {
+        type: Number,
+        default: DEFAULT_OPEN_RSVP_LIMIT,
+        min: 0,
+        max: 2000,
+      },
 
       // Draft events aren't publicly reachable at /i/[slug] yet.
       isPublished: { type: Boolean, default: false },

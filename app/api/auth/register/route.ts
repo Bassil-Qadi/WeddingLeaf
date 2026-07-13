@@ -2,11 +2,35 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 import { connectToDatabase } from "@/lib/mongodb";
+import { rateLimitByIp } from "@/lib/rate-limit";
 import { User } from "@/models/User";
 import { signUpSchema } from "@/lib/validations/auth";
 
+/**
+ * Signing up is a once-per-person act, so this can be tight. It bounds two
+ * different costs: rows in the `users` collection, and CPU — a bcrypt hash at
+ * cost 12 is deliberately expensive, which makes an unthrottled register
+ * endpoint a cheap way for someone else to spend our compute.
+ */
+const REGISTER_LIMIT = 5;
+const REGISTER_WINDOW_MS = 60 * 60 * 1000;
+
 export async function POST(request: Request) {
-  const body = await request.json();
+  const limit = await rateLimitByIp(
+    request,
+    "register",
+    REGISTER_LIMIT,
+    REGISTER_WINDOW_MS,
+  );
+
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: { email: ["محاولات كثيرة. يُرجى المحاولة لاحقًا"] } },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfter) } },
+    );
+  }
+
+  const body = await request.json().catch(() => null);
   const parsed = signUpSchema.safeParse(body);
 
   if (!parsed.success) {

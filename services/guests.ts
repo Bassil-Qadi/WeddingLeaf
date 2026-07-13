@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Event } from "@/models/Event";
 import { Guest } from "@/models/Guest";
+import { DEFAULT_OPEN_RSVP_LIMIT } from "@/lib/validations/event";
 import type { GuestInput, RsvpInput, UpdateGuestInput } from "@/lib/validations/guest";
 
 export type GuestStatus = "pending" | "attending" | "declined";
@@ -273,7 +274,10 @@ export async function markGuestsSent(
 
 export type RsvpResult =
   | { ok: true; guest: GuestRecord }
-  | { ok: false; reason: "closed" | "not-found" | "over-capacity" };
+  | {
+      ok: false;
+      reason: "closed" | "not-found" | "over-capacity" | "open-limit";
+    };
 
 /**
  * Record a guest's answer.
@@ -284,7 +288,10 @@ export type RsvpResult =
  * marked `source: "open"` so the couple can see it wasn't someone they named.
  *
  * The seat cap is enforced here rather than in the stepper, because the
- * stepper is client-side and the endpoint is public.
+ * stepper is client-side and the endpoint is public. For the same reason the
+ * open path is bounded: it is the only branch that *creates* a row, so it is
+ * the only branch an attacker can use to grow the collection, and the ceiling
+ * below is what stops that regardless of how many IPs they spread across.
  */
 export async function submitRsvp(
   eventId: string,
@@ -293,7 +300,9 @@ export async function submitRsvp(
   await connectToDatabase();
 
   const event = await Event.findById(eventId)
-    .select("rsvpEnabled rsvpDeadline allowOpenRsvp maxPartySize isPublished")
+    .select(
+      "rsvpEnabled rsvpDeadline allowOpenRsvp maxPartySize openRsvpLimit isPublished",
+    )
     .lean();
 
   if (!event || !event.isPublished || event.rsvpEnabled === false) {
@@ -304,13 +313,21 @@ export async function submitRsvp(
     return { ok: false, reason: "closed" };
   }
 
+  const maxPartySize = event.maxPartySize ?? 4;
   const partySize = input.status === "attending" ? input.partySize : 0;
 
   if (input.token) {
     const guest = await Guest.findOne({ eventId, token: input.token });
     if (!guest) return { ok: false, reason: "not-found" };
 
-    if (partySize > (guest.seats ?? 1)) {
+    // A named guest is capped by the seats the couple set aside for them. An
+    // open responder was never granted any, so they are capped by the event's
+    // ceiling — *not* by whatever they happened to claim on their first answer,
+    // which would let someone drop to one seat and then be unable to go back up.
+    const isOpen = guest.source === "open";
+    const cap = isOpen ? maxPartySize : (guest.seats ?? 1);
+
+    if (partySize > cap) {
       return { ok: false, reason: "over-capacity" };
     }
 
@@ -319,6 +336,9 @@ export async function submitRsvp(
       partySize,
       note: input.note ?? null,
       respondedAt: new Date(),
+      // An open responder's seat allowance is just whatever they last claimed;
+      // keep it in step so the couple's "seats allocated" total stays honest.
+      ...(isOpen ? { seats: Math.max(partySize, 1) } : {}),
     });
     await guest.save();
 
@@ -329,7 +349,6 @@ export async function submitRsvp(
     return { ok: false, reason: "closed" };
   }
 
-  const maxPartySize = event.maxPartySize ?? 4;
   if (partySize > maxPartySize) {
     return { ok: false, reason: "over-capacity" };
   }
@@ -338,12 +357,25 @@ export async function submitRsvp(
     return { ok: false, reason: "not-found" };
   }
 
+  // Counted rather than kept as a running total on the event: the couple can
+  // delete a spam row, and a counter that only ever goes up would keep the
+  // event closed after they had cleaned it out.
+  const openCount = await Guest.countDocuments({ eventId, source: "open" });
+  if (openCount >= (event.openRsvpLimit ?? DEFAULT_OPEN_RSVP_LIMIT)) {
+    return { ok: false, reason: "open-limit" };
+  }
+
   const doc = await Guest.create({
     eventId,
     name: input.name,
     phone: input.phone ?? null,
     seats: Math.max(partySize, 1),
-    token: null,
+    // Open responders get a token as well. It is what lets them come back and
+    // change their answer: without one, every revision would fall through to
+    // this branch again and append a *second* row, quietly inflating the
+    // confirmed headcount. It also keeps a literal null out of the unique index
+    // on `token`, which is what made the second open RSVP 500 — see models/Guest.
+    token: generateToken(),
     status: input.status,
     partySize,
     note: input.note ?? null,
