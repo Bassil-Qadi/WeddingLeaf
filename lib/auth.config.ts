@@ -9,6 +9,19 @@ import type { NextAuthConfig } from "next-auth";
  * its own NextAuth instance from this object and never pulls in `lib/auth.ts`.
  */
 export const authConfig = {
+  /**
+   * Auth.js infers its own origin from the `Host` header, and refuses to unless
+   * it is told the header can be believed. It grants that trust automatically on
+   * Vercel and in development — and nowhere else. This app is on Netlify, where
+   * the result is an `UntrustedHost` error on every sign-in.
+   *
+   * Trusting the header means trusting whatever fronts the app. Netlify sets it
+   * from the request it terminated, so that is fine here; it would not be fine
+   * on an origin reachable directly, bypassing the CDN. The alternative is the
+   * `AUTH_TRUST_HOST` env var, which is the same decision made somewhere nobody
+   * will find it in six months.
+   */
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/auth/sign-in",

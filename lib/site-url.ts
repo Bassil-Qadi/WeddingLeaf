@@ -17,6 +17,13 @@ export function siteUrl(): URL {
     process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXTAUTH_URL;
   if (explicit) return new URL(explicit);
 
+  // Netlify hands us the site's own origin, already absolute and with a scheme.
+  // `URL` is Netlify's name for it, not ours — hence the NETLIFY guard, so a
+  // stray `URL` in some other environment cannot hijack every share card.
+  if (process.env.NETLIFY && process.env.URL) {
+    return new URL(process.env.URL);
+  }
+
   if (process.env.VERCEL_URL) {
     return new URL(`https://${process.env.VERCEL_URL}`);
   }
