@@ -255,18 +255,37 @@ export async function markGuestOpened(
   );
 }
 
-export async function markGuestsSent(
+/**
+ * Mark invitations as sent — or un-mark them.
+ *
+ * `sentAt` records that the couple *opened WhatsApp* for this guest, which is
+ * the most we can honestly know: WhatsApp exposes no API, so the message is
+ * composed for them and a human presses send. They might not have. The undo is
+ * therefore not a nicety, it is the correction mechanism for the one failure
+ * that actually hurts — a guest marked sent who was never invited at all.
+ *
+ * Unconditional `$set` rather than "first send wins": a couple re-sending a link
+ * to someone who lost it should see today's date, not the date of the send that
+ * evidently didn't land.
+ */
+export async function setGuestsSent(
   eventId: string,
   ownerId: string,
   guestIds: string[],
-): Promise<number> {
+  sent: boolean,
+): Promise<number | null> {
   await connectToDatabase();
 
-  if (!(await assertOwnedEvent(eventId, ownerId))) return 0;
+  // `null` for "not yours", a count for "yours" — a bare 0 would conflate a
+  // wrong event id with a no-op update, and the caller would report success.
+  if (!(await assertOwnedEvent(eventId, ownerId))) return null;
+
+  const ids = guestIds.filter((id) => Types.ObjectId.isValid(id));
+  if (ids.length === 0) return 0;
 
   const result = await Guest.updateMany(
-    { eventId, _id: { $in: guestIds.filter(Types.ObjectId.isValid) } },
-    { $set: { sentAt: new Date() } },
+    { eventId, _id: { $in: ids } },
+    { $set: { sentAt: sent ? new Date() : null } },
   );
 
   return result.modifiedCount;

@@ -8,12 +8,14 @@ import type { GuestRecord, GuestStats } from "@/services/guests";
 import { AddGuestsDialog } from "./add-guests-dialog";
 import { GuestStatsRow } from "./guest-stats";
 import { GuestTable } from "./guest-table";
+import { SendQueue } from "./send-queue";
 
 interface GuestManagerProps {
   eventId: string;
   slug: string;
   brideName: string;
   groomName: string;
+  timeZone: string;
   isPublished: boolean;
   initialGuests: GuestRecord[];
   initialStats: GuestStats;
@@ -24,6 +26,7 @@ export function GuestManager({
   slug,
   brideName,
   groomName,
+  timeZone,
   isPublished,
   initialGuests,
   initialStats,
@@ -34,6 +37,8 @@ export function GuestManager({
   // headcount; a mutation just asks it to re-render rather than keeping a
   // second copy of the numbers in sync here.
   const refresh = () => router.refresh();
+
+  const context = { slug, brideName, groomName, timeZone };
 
   return (
     <div className="flex flex-col gap-6">
@@ -73,6 +78,14 @@ export function GuestManager({
             </Button>
           )}
 
+          <SendQueue
+            eventId={eventId}
+            isPublished={isPublished}
+            guests={initialGuests}
+            onChanged={refresh}
+            {...context}
+          />
+
           <AddGuestsDialog eventId={eventId} onAdded={refresh} />
         </div>
       </div>
@@ -94,11 +107,9 @@ export function GuestManager({
       ) : (
         <GuestTable
           eventId={eventId}
-          slug={slug}
-          brideName={brideName}
-          groomName={groomName}
           guests={initialGuests}
           onChanged={refresh}
+          {...context}
         />
       )}
     </div>

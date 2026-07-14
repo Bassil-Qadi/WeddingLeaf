@@ -56,6 +56,7 @@ export default async function GuestsPage({ params }: PageProps) {
         slug={event.slug}
         brideName={event.brideName}
         groomName={event.groomName}
+        timeZone={event.timeZone}
         isPublished={event.isPublished}
         initialGuests={guests}
         initialStats={stats}

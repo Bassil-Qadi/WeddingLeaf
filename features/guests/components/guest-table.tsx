@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, MessageCircle, Trash2, X } from "lucide-react";
+import { Check, Copy, MessageCircle, Send, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { GuestRecord } from "@/services/guests";
+import {
+  invitationUrl,
+  whatsappSendUrl,
+  type MessageContext,
+} from "../lib/whatsapp";
 
 const STATUS: Record<
   GuestRecord["status"],
@@ -27,51 +32,17 @@ const STATUS: Record<
   },
 };
 
-/** The link that actually gets sent — a guest's invitation, not the couple's. */
-function guestLink(slug: string, token: string): string {
-  return `${window.location.origin}/i/${slug}/${token}`;
-}
-
-/**
- * A pre-written Arabic message with the guest's own link in it. Sending an
- * invitation in this market means sending it on WhatsApp, one person at a
- * time, so the couple should never have to compose it 300 times.
- */
-function whatsappLink(
-  slug: string,
-  guest: GuestRecord,
-  brideName: string,
-  groomName: string,
-): string {
-  const message = [
-    `عزيزنا ${guest.name}،`,
-    "",
-    `يسعدنا دعوتكم لحضور حفل زفاف ${brideName} و ${groomName}.`,
-    "تجدون بطاقتكم الخاصة هنا:",
-    guestLink(slug, guest.token!),
-  ].join("\n");
-
-  const phone = guest.phone?.replace(/[^0-9]/g, "") ?? "";
-
-  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-}
-
-interface GuestTableProps {
+interface GuestTableProps extends MessageContext {
   eventId: string;
-  slug: string;
-  brideName: string;
-  groomName: string;
   guests: GuestRecord[];
   onChanged: () => void;
 }
 
 export function GuestTable({
   eventId,
-  slug,
-  brideName,
-  groomName,
   guests,
   onChanged,
+  ...context
 }: GuestTableProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -79,9 +50,38 @@ export function GuestTable({
   async function copyLink(guest: GuestRecord) {
     if (!guest.token) return;
 
-    await navigator.clipboard.writeText(guestLink(slug, guest.token));
+    await navigator.clipboard.writeText(
+      invitationUrl(context.slug, guest.token),
+    );
     setCopiedId(guest.id);
     setTimeout(() => setCopiedId(null), 1600);
+  }
+
+  /**
+   * The undo for the send queue, which marks a guest sent the moment WhatsApp
+   * opens — before anyone has actually pressed send in it. This is where a
+   * couple fixes that, and it is the only reason marking optimistically is
+   * defensible.
+   */
+  async function toggleSent(guest: GuestRecord) {
+    setBusyId(guest.id);
+
+    try {
+      const response = await fetch(`/api/events/${eventId}/guests/sent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guestIds: [guest.id], sent: !guest.sentAt }),
+      });
+
+      if (!response.ok) {
+        toast.error("تعذّر تحديث حالة الإرسال");
+        return;
+      }
+
+      onChanged();
+    } finally {
+      setBusyId(null);
+    }
   }
 
   async function remove(guest: GuestRecord) {
@@ -107,133 +107,160 @@ export function GuestTable({
 
   return (
     <div className="overflow-x-auto rounded-xl border">
-      <table className="w-full min-w-[680px] text-sm">
+      <table className="w-full min-w-[760px] text-sm">
         <thead>
           <tr className="border-b bg-muted/40 text-start text-xs text-muted-foreground">
             <Th>الضيف</Th>
             <Th>المقاعد</Th>
             <Th>الحالة</Th>
             <Th>الحضور</Th>
+            <Th>أُرسلت</Th>
             <Th>فتح</Th>
             <Th className="text-end">إجراءات</Th>
           </tr>
         </thead>
 
         <tbody>
-          {guests.map((guest) => (
-            <tr
-              key={guest.id}
-              className="border-b transition-colors last:border-0 hover:bg-muted/30"
-            >
-              <Td>
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-2 font-medium">
-                    {guest.name}
-                    {guest.source === "open" && (
-                      <Badge
-                        variant="outline"
-                        className="border-amber-500/25 bg-amber-500/10 text-[10px] text-amber-600"
-                      >
-                        ردّ عام
-                      </Badge>
+          {guests.map((guest) => {
+            const sendUrl = whatsappSendUrl(guest, context);
+
+            return (
+              <tr
+                key={guest.id}
+                className="border-b transition-colors last:border-0 hover:bg-muted/30"
+              >
+                <Td>
+                  <div className="flex flex-col">
+                    <span className="flex items-center gap-2 font-medium">
+                      {guest.name}
+                      {guest.source === "open" && (
+                        <Badge
+                          variant="outline"
+                          className="border-amber-500/25 bg-amber-500/10 text-[10px] text-amber-600"
+                        >
+                          ردّ عام
+                        </Badge>
+                      )}
+                    </span>
+                    {guest.phone && (
+                      <span dir="ltr" className="text-xs text-muted-foreground">
+                        {guest.phone}
+                      </span>
                     )}
-                  </span>
-                  {guest.phone && (
-                    <span dir="ltr" className="text-xs text-muted-foreground">
-                      {guest.phone}
-                    </span>
+                    {guest.note && (
+                      <span className="mt-0.5 text-xs italic text-muted-foreground/80">
+                        «{guest.note}»
+                      </span>
+                    )}
+                  </div>
+                </Td>
+
+                <Td className="text-muted-foreground">{guest.seats}</Td>
+
+                <Td>
+                  <Badge
+                    variant="outline"
+                    className={cn("text-[11px]", STATUS[guest.status].className)}
+                  >
+                    {STATUS[guest.status].label}
+                  </Badge>
+                </Td>
+
+                <Td>
+                  {guest.status === "attending" ? (
+                    <span className="font-medium">{guest.partySize}</span>
+                  ) : (
+                    <span className="text-muted-foreground/50">—</span>
                   )}
-                  {guest.note && (
-                    <span className="mt-0.5 text-xs italic text-muted-foreground/80">
-                      «{guest.note}»
-                    </span>
+                </Td>
+
+                <Td>
+                  {guest.source === "open" ? (
+                    <span className="text-muted-foreground/50">—</span>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      disabled={busyId === guest.id}
+                      aria-label={
+                        guest.sentAt
+                          ? "التراجع عن الإرسال"
+                          : "تعليمها كمُرسلة"
+                      }
+                      aria-pressed={Boolean(guest.sentAt)}
+                      onClick={() => toggleSent(guest)}
+                    >
+                      <Send
+                        className={
+                          guest.sentAt
+                            ? "text-emerald-600"
+                            : "text-muted-foreground/40"
+                        }
+                      />
+                    </Button>
                   )}
-                </div>
-              </Td>
+                </Td>
 
-              <Td className="text-muted-foreground">{guest.seats}</Td>
+                <Td>
+                  {guest.openedAt ? (
+                    <Check className="size-4 text-emerald-600" />
+                  ) : (
+                    <X className="size-4 text-muted-foreground/40" />
+                  )}
+                </Td>
 
-              <Td>
-                <Badge
-                  variant="outline"
-                  className={cn("text-[11px]", STATUS[guest.status].className)}
-                >
-                  {STATUS[guest.status].label}
-                </Badge>
-              </Td>
-
-              <Td>
-                {guest.status === "attending" ? (
-                  <span className="font-medium">{guest.partySize}</span>
-                ) : (
-                  <span className="text-muted-foreground/50">—</span>
-                )}
-              </Td>
-
-              <Td>
-                {guest.openedAt ? (
-                  <Check className="size-4 text-emerald-600" />
-                ) : (
-                  <X className="size-4 text-muted-foreground/40" />
-                )}
-              </Td>
-
-              <Td className="text-end">
-                <div className="flex items-center justify-end gap-1">
-                  {guest.token && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label="نسخ رابط الدعوة"
-                        onClick={() => copyLink(guest)}
-                      >
-                        {copiedId === guest.id ? (
-                          <Check className="text-emerald-600" />
-                        ) : (
-                          <Copy />
-                        )}
-                      </Button>
-
-                      {guest.phone && (
+                <Td className="text-end">
+                  <div className="flex items-center justify-end gap-1">
+                    {guest.token && (
+                      <>
                         <Button
-                          nativeButton={false}
                           variant="ghost"
                           size="icon-sm"
-                          aria-label="إرسال عبر واتساب"
-                          render={
-                            <a
-                              href={whatsappLink(
-                                slug,
-                                guest,
-                                brideName,
-                                groomName,
-                              )}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            />
-                          }
+                          aria-label="نسخ رابط الدعوة"
+                          onClick={() => copyLink(guest)}
                         >
-                          <MessageCircle />
+                          {copiedId === guest.id ? (
+                            <Check className="text-emerald-600" />
+                          ) : (
+                            <Copy />
+                          )}
                         </Button>
-                      )}
-                    </>
-                  )}
 
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label="حذف الضيف"
-                    disabled={busyId === guest.id}
-                    className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                    onClick={() => remove(guest)}
-                  >
-                    <Trash2 />
-                  </Button>
-                </div>
-              </Td>
-            </tr>
-          ))}
+                        {sendUrl && (
+                          <Button
+                            nativeButton={false}
+                            variant="ghost"
+                            size="icon-sm"
+                            aria-label="إرسال عبر واتساب"
+                            render={
+                              <a
+                                href={sendUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              />
+                            }
+                          >
+                            <MessageCircle />
+                          </Button>
+                        )}
+                      </>
+                    )}
+
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label="حذف الضيف"
+                      disabled={busyId === guest.id}
+                      className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      onClick={() => remove(guest)}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
+                </Td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

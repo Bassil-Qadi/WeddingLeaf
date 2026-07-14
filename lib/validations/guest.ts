@@ -30,6 +30,21 @@ export const updateGuestSchema = guestSchema.partial();
 export type UpdateGuestInput = z.infer<typeof updateGuestSchema>;
 
 /**
+ * Marking a batch of invitations sent, or un-marking them. The queue sends one
+ * guest at a time, but "تحديد الكل كمُرسلة" is a whole list at once — hence the
+ * ceiling, which matches the one on adding guests.
+ */
+export const setSentSchema = z.object({
+  guestIds: z
+    .array(z.string())
+    .min(1, { message: "اختر ضيفًا واحدًا على الأقل" })
+    .max(500),
+  sent: z.boolean(),
+});
+
+export type SetSentInput = z.infer<typeof setSentSchema>;
+
+/**
  * A guest's own answer, submitted from the invitation.
  *
  * `partySize` is only meaningful when attending, and is checked against the
