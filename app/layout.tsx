@@ -2,10 +2,14 @@ import type { Metadata, Viewport } from "next";
 import Providers from "@/providers";
 import { arabic, amiri, cairo, cormorant } from "@/config/fonts";
 import { APP } from "@/config/app";
+import { siteUrl } from "@/lib/site-url";
 import { designSystem } from "@/config/design-system";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  // Without this, the generated share card resolves against localhost in
+  // production and every WhatsApp preview comes back empty. See lib/site-url.
+  metadataBase: siteUrl(),
   title: {
     default: `${APP.name} | ${APP.tagline}`,
     template: `%s | ${APP.name}`,
