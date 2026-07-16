@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
-import { signInSchema, type SignInInput } from "@/lib/validations/auth";
+import {
+  resetPasswordSchema,
+  type ResetPasswordInput,
+} from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,11 +23,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-interface SignInFormProps {
-  callbackUrl?: string;
+interface ResetPasswordFormProps {
+  token: string;
 }
 
-export function SignInForm({ callbackUrl = "/dashboard" }: SignInFormProps) {
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -34,80 +36,62 @@ export function SignInForm({ callbackUrl = "/dashboard" }: SignInFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInInput>({
-    resolver: zodResolver(signInSchema),
+  } = useForm<ResetPasswordInput>({
+    resolver: zodResolver(resetPasswordSchema),
+    // The token comes from the URL, not a field the user types. Seeding it as a
+    // default keeps it inside the same validated payload the schema checks.
+    defaultValues: { token },
   });
 
-  async function onSubmit(values: SignInInput) {
+  async function onSubmit(values: ResetPasswordInput) {
     setIsSubmitting(true);
 
-    const result = await signIn("credentials", {
-      ...values,
-      redirect: false,
+    const response = await fetch("/api/auth/password/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
     });
 
     setIsSubmitting(false);
 
-    if (result?.error) {
-      toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+    if (response.ok) {
+      toast.success("تم تحديث كلمة المرور، يمكنك تسجيل الدخول الآن");
+      router.push("/auth/sign-in");
       return;
     }
 
-    toast.success("تم تسجيل الدخول بنجاح");
-    router.push(callbackUrl);
-    router.refresh();
+    const body = await response.json().catch(() => null);
+    // An expired or already-used link comes back as a plain string message; a
+    // validation miss comes back as field errors. Either way, tell them to
+    // start over rather than trying to recover a dead token in place.
+    toast.error(
+      typeof body?.error === "string"
+        ? body.error
+        : "تعذّر تحديث كلمة المرور، حاول مرة أخرى",
+    );
   }
 
   return (
     <Card className="shadow-xl shadow-primary/5 [--card-spacing:--spacing(6)]">
       <CardHeader className="text-center">
         <CardTitle className="font-heading text-2xl">
-          تسجيل الدخول
+          كلمة مرور جديدة
         </CardTitle>
-        <CardDescription>
-          سجّل الدخول لإدارة دعوات الزفاف الخاصة بك
-        </CardDescription>
+        <CardDescription>اختر كلمة مرور جديدة لحسابك</CardDescription>
       </CardHeader>
 
       <CardContent>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-5"
-        >
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">البريد الإلكتروني</Label>
-            <Input
-              id="email"
-              type="email"
-              dir="rtl"
-              autoComplete="email"
-              placeholder="you@example.com"
-              aria-invalid={Boolean(errors.email)}
-              {...register("email")}
-            />
-            {errors.email && (
-              <p role="alert" className="text-xs text-destructive">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+          <input type="hidden" {...register("token")} />
 
           <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">كلمة المرور</Label>
-              <Link
-                href="/auth/forgot-password"
-                className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              >
-                نسيت كلمة المرور؟
-              </Link>
-            </div>
+            <Label htmlFor="password">كلمة المرور الجديدة</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                placeholder="••••••••"
+                autoComplete="new-password"
+                placeholder="8 أحرف على الأقل"
                 className="pe-9"
                 aria-invalid={Boolean(errors.password)}
                 {...register("password")}
@@ -135,9 +119,26 @@ export function SignInForm({ callbackUrl = "/dashboard" }: SignInFormProps) {
             )}
           </div>
 
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="confirmPassword">تأكيد كلمة المرور</Label>
+            <Input
+              id="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder="أعد إدخال كلمة المرور"
+              aria-invalid={Boolean(errors.confirmPassword)}
+              {...register("confirmPassword")}
+            />
+            {errors.confirmPassword && (
+              <p role="alert" className="text-xs text-destructive">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
+
           <Button type="submit" size="lg" disabled={isSubmitting} className="mt-2">
             {isSubmitting && <Loader2 className="animate-spin" />}
-            دخول
+            تحديث كلمة المرور
           </Button>
         </form>
 
@@ -148,12 +149,11 @@ export function SignInForm({ callbackUrl = "/dashboard" }: SignInFormProps) {
         </div>
 
         <p className="text-center text-sm text-muted-foreground">
-          ليس لديك حساب؟{" "}
           <Link
-            href="/auth/sign-up"
+            href="/auth/sign-in"
             className="font-medium text-primary underline-offset-4 hover:underline"
           >
-            أنشئ حسابًا جديدًا
+            العودة لتسجيل الدخول
           </Link>
         </p>
       </CardContent>
