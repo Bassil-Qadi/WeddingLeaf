@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CalendarPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toArabicPadded } from "../lib/arabic";
 import { Chapter, ChapterHeading } from "./chapter";
@@ -7,6 +7,7 @@ import { Reveal } from "./reveal";
 import { ThreadNode } from "./thread-node";
 
 interface VenueProps {
+  slug: string;
   venueName: string;
   venueAddress: string;
   mapUrl: string;
@@ -15,8 +16,9 @@ interface VenueProps {
   nodeIndex: number;
 }
 
-/** ٠٤ · المكان — where, and how to get there. */
+/** ٠٤ · المكان — where, how to get there, and into the guest's calendar. */
 export function Venue({
+  slug,
   venueName,
   venueAddress,
   mapUrl,
@@ -51,17 +53,29 @@ export function Venue({
             matteClassName="p-2"
           />
 
-          <Button
-            variant="ghost"
-            nativeButton={false}
-            render={
-              <a href={mapUrl} target="_blank" rel="noopener noreferrer" />
-            }
-            className="mt-[22px] h-auto gap-2.5 rounded-full border border-gt-gold/45 px-[26px] py-[13px] text-sm font-normal [word-spacing:0.06em] text-gt-gold-btn transition-colors duration-400 hover:border-gt-gold/75 hover:bg-gt-gold/10 hover:text-gt-gold-btn"
-          >
-            احصلوا على الاتجاهات
-            <ArrowLeft className="size-4" strokeWidth={1.5} />
-          </Button>
+          <div className="mt-[22px] flex flex-wrap gap-2.5">
+            <Button
+              variant="ghost"
+              nativeButton={false}
+              render={
+                <a href={mapUrl} target="_blank" rel="noopener noreferrer" />
+              }
+              className="h-auto gap-2.5 rounded-full border border-gt-gold/45 px-[26px] py-[13px] text-sm font-normal [word-spacing:0.06em] text-gt-gold-btn transition-colors duration-400 hover:border-gt-gold/75 hover:bg-gt-gold/10 hover:text-gt-gold-btn"
+            >
+              احصلوا على الاتجاهات
+              <ArrowLeft className="size-4" strokeWidth={1.5} />
+            </Button>
+
+            <Button
+              variant="ghost"
+              nativeButton={false}
+              render={<a href={`/i/${slug}/calendar`} />}
+              className="h-auto gap-2.5 rounded-full border border-gt-gold/45 px-[26px] py-[13px] text-sm font-normal [word-spacing:0.06em] text-gt-gold-btn transition-colors duration-400 hover:border-gt-gold/75 hover:bg-gt-gold/10 hover:text-gt-gold-btn"
+            >
+              أضف إلى التقويم
+              <CalendarPlus className="size-4" strokeWidth={1.5} />
+            </Button>
+          </div>
         </Reveal>
       </div>
     </Chapter>

@@ -121,6 +121,7 @@ function Experience({ invitation }: { invitation: InvitationData }) {
       key="venue"
       nodeIndex={nodeIndex++}
       chapterNumber={chapterNumber++}
+      slug={data.slug}
       venueName={data.venueName}
       venueAddress={data.venueAddress}
       mapUrl={data.mapUrl}
