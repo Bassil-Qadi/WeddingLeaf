@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, QrCode } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { getEventForOwner } from "@/services/events";
 import { getGuestStats, listGuests } from "@/services/guests";
 import { GuestManager } from "@/features/guests/components/guest-manager";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "قائمة الضيوف",
@@ -45,10 +46,24 @@ export default async function GuestsPage({ params }: PageProps) {
           العودة إلى الدعوة
         </Link>
 
-        <h1 className="font-heading text-2xl">قائمة الضيوف</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {event.brideName} و {event.groomName} — {event.dateDisplay}
-        </p>
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h1 className="font-heading text-2xl">قائمة الضيوف</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {event.brideName} و {event.groomName} — {event.dateDisplay}
+            </p>
+          </div>
+
+          <Button
+            nativeButton={false}
+            variant="outline"
+            size="sm"
+            render={<Link href={`/dashboard/events/${event.id}/guests/sheet`} />}
+          >
+            <QrCode className="size-4" />
+            ورقة الاستقبال
+          </Button>
+        </div>
       </div>
 
       <GuestManager

@@ -574,3 +574,22 @@
     @apply font-sans;
   }
 }
+/* Door sheet printing.
+ *
+ * Guarded by `:has([data-print-sheet])` so every other dashboard page still
+ * prints normally — these rules only fire on a page that actually renders a
+ * sheet. When it does, strip the dashboard chrome and the on-screen toolbar so
+ * the paper carries only the guest cards. */
+@media print {
+  body:has([data-print-sheet]) header,
+  body:has([data-print-sheet]) [data-print-hide] {
+    display: none !important;
+  }
+  body:has([data-print-sheet]) main {
+    padding: 0 !important;
+  }
+  [data-print-sheet] {
+    border: 0 !important;
+    padding: 0 !important;
+  }
+}
