@@ -35,10 +35,28 @@ import {
         match: /^[a-z0-9-]+$/,
       },
 
+      // The regional axis — Arabic month names + default timezone (see lib/date).
       style: {
         type: String,
         enum: ["jordanian", "gulf", "palestinian", "lebanese", "egyptian"],
         default: "jordanian",
+      },
+
+      // The visual axis — palette/mood only (see the .gt[data-theme] blocks in
+      // globals.css). Independent of `style`: any region can wear any theme.
+      theme: {
+        type: String,
+        enum: ["classic", "modern", "opulent", "romantic"],
+        default: "classic",
+      },
+
+      // The layout axis — which whole invitation experience renders (structure
+      // and motion, not colour). Independent of `theme`: any layout wears any
+      // palette. The dispatcher is in invitation-experience.tsx.
+      template: {
+        type: String,
+        enum: ["thread", "card"],
+        default: "thread",
       },
 
       groomName: { type: String, required: true, trim: true },

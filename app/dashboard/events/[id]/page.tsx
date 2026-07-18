@@ -85,6 +85,8 @@ export default async function EditEventPage({ params }: PageProps) {
         defaultValues={{
           slug: event.slug,
           style: event.style,
+          theme: event.theme,
+          template: event.template,
           groomName: event.groomName,
           brideName: event.brideName,
           date: event.date,

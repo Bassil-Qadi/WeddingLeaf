@@ -378,6 +378,74 @@
   color: var(--gt-ink);
 }
 
+/* ── Visual themes ────────────────────────────────────────────────────────
+ * Each block overrides the six palette vars and the page wash; everything
+ * decorative (thread, motes, veil, the hero ampersand) reads those vars, so
+ * the whole invitation re-tints from here without touching a component. The
+ * base `.gt` above is Classic, so only the other three need a block.
+ *
+ * These MUST stay before `@layer base` for the same reason `.gt` does.
+ * ─────────────────────────────────────────────────────────────────────── */
+
+/* حديث — cool, minimal, a muted slate accent instead of gold. */
+.gt[data-theme="modern"] {
+  --gt-paper: #f2f4f4;
+  --gt-ink: #23282c;
+  --gt-gold: #52707a;
+  --gt-gold-light: #7fa0a9;
+  --gt-gold-deep: #3a555d;
+  --gt-gold-btn: #446069;
+
+  background:
+    radial-gradient(
+      125% 85% at 50% -8%,
+      rgba(255, 255, 255, 0.9),
+      transparent 55%
+    ),
+    radial-gradient(80% 55% at 82% 12%, rgba(82, 112, 122, 0.08), transparent 60%),
+    linear-gradient(180deg, #f8fafa 0%, #f1f4f4 45%, #e8ecec 100%);
+}
+
+/* فخم — a dark jewel ground under rich gold; text turns to warm cream. */
+.gt[data-theme="opulent"] {
+  --gt-paper: #14201c;
+  --gt-ink: #efe6d2;
+  --gt-gold: #c9a24a;
+  --gt-gold-light: #e7c877;
+  --gt-gold-deep: #9c7a2f;
+  --gt-gold-btn: #dcb85f;
+
+  background:
+    radial-gradient(
+      120% 80% at 50% -10%,
+      rgba(32, 52, 44, 0.9),
+      transparent 55%
+    ),
+    radial-gradient(70% 50% at 82% 12%, rgba(201, 162, 74, 0.14), transparent 60%),
+    radial-gradient(70% 50% at 12% 92%, rgba(201, 162, 74, 0.08), transparent 60%),
+    linear-gradient(180deg, #17241f 0%, #101a16 60%, #0c1512 100%);
+}
+
+/* وردي — soft blush paper and rose-gold. */
+.gt[data-theme="romantic"] {
+  --gt-paper: #f7ecec;
+  --gt-ink: #4a3033;
+  --gt-gold: #b76e79;
+  --gt-gold-light: #e0a4ac;
+  --gt-gold-deep: #8f4f59;
+  --gt-gold-btn: #a15c66;
+
+  background:
+    radial-gradient(
+      125% 85% at 50% -8%,
+      rgba(255, 250, 250, 0.9),
+      transparent 55%
+    ),
+    radial-gradient(80% 55% at 82% 12%, rgba(224, 164, 172, 0.16), transparent 60%),
+    radial-gradient(70% 50% at 12% 92%, rgba(214, 150, 160, 0.12), transparent 60%),
+    linear-gradient(180deg, #fbf1f1 0%, #f6e8e9 45%, #f0dee0 100%);
+}
+
 /* Fixed fractal-noise wash so the ivory reads as paper, not as flat fill. */
 .gt-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -385,32 +453,35 @@
   opacity: 0.045;
 }
 
-/* A single grain of gold dust, drifting up and out. */
+/* A single grain of accent dust, drifting up and out. Tinted from the theme's
+ * accent so a slate or rose invitation doesn't rain gold. */
 .gt-mote {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(184, 147, 63, 0.85),
-    rgba(184, 147, 63, 0)
+    color-mix(in srgb, var(--gt-gold) 82%, transparent),
+    transparent
   );
   animation: gt-drift var(--mote-duration) ease-in-out var(--mote-delay) infinite;
 }
 
-/* The veil itself: near-opaque ivory, hanging (inset shadow at the hem). */
+/* The veil itself: the theme's paper, hanging (inset shadow at the hem). Woven
+ * from `--gt-paper` so a dark theme lifts a dark veil, not an ivory one. */
 .gt-veil {
   background:
     radial-gradient(
       48% 42% at 50% 44%,
-      rgba(255, 253, 248, 0.96),
+      color-mix(in srgb, var(--gt-paper) 86%, white),
       transparent 72%
     ),
     linear-gradient(
       180deg,
-      rgba(250, 245, 237, 0.98) 0%,
-      rgba(244, 238, 227, 0.97) 55%,
-      rgba(238, 229, 215, 0.97) 100%
+      color-mix(in srgb, var(--gt-paper) 94%, white) 0%,
+      var(--gt-paper) 55%,
+      color-mix(in srgb, var(--gt-paper) 90%, black) 100%
     );
-  box-shadow: inset 0 -60px 90px -60px rgba(120, 90, 40, 0.18);
+  box-shadow: inset 0 -60px 90px -60px
+    color-mix(in srgb, var(--gt-gold-deep) 40%, transparent);
 }
 
 /* Silk shimmer sweeping across the veil, and the lace weave beneath it. */
@@ -427,15 +498,20 @@
 .gt-lace {
   opacity: 0.5;
   background-image: radial-gradient(
-    rgba(166, 124, 46, 0.1) 1px,
+    color-mix(in srgb, var(--gt-gold) 12%, transparent) 1px,
     transparent 1.4px
   );
   background-size: 22px 22px;
 }
 
-/* The hero `&` — gold leaf catching the light as it turns. */
+/* The hero `&` — leaf catching the light as it turns; tinted per theme. */
 .gt-amp {
-  background: linear-gradient(90deg, #7d5d20, #d8ab4a, #7d5d20);
+  background: linear-gradient(
+    90deg,
+    var(--gt-gold-deep),
+    var(--gt-gold-light),
+    var(--gt-gold-deep)
+  );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;

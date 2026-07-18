@@ -70,7 +70,7 @@ interface VeilProps {
 /**
  * كشف الطرحة — the opening overlay. The invitation is covered until the
  * guest chooses to uncover it; scroll stays locked until they do (see
- * `<InvitationExperience>`).
+ * `<ThreadTemplate>`).
  */
 export function Veil({
   brideName,

@@ -14,7 +14,13 @@ import {
   type CreateEventInput,
   type UpdateEventInput,
 } from "@/lib/validations/event";
-import type { WeddingStyle } from "@/types/invitation";
+import type {
+  WeddingStyle,
+  WeddingTheme,
+  WeddingTemplate,
+} from "@/types/invitation";
+import { normalizeTheme } from "@/lib/wedding-themes";
+import { normalizeTemplate } from "@/lib/wedding-templates";
 
 export interface EventSummary {
   id: string;
@@ -33,6 +39,8 @@ export interface EventSummary {
 
 export interface EventDetail extends EventSummary {
   ownerId: string;
+  theme: WeddingTheme;
+  template: WeddingTemplate;
   /** Local wall-clock halves, for the `<input type="date">` / `type="time">`. */
   date: string;
   time: string;
@@ -60,6 +68,10 @@ interface EventLeanDoc {
   ownerId: Types.ObjectId;
   slug: string;
   style: WeddingStyle;
+  /** Absent on events written before the visual-theme field existed. */
+  theme?: WeddingTheme;
+  /** Absent on events written before the layout field existed. */
+  template?: WeddingTemplate;
   groomName: string;
   brideName: string;
   date: Date;
@@ -114,6 +126,8 @@ function toDetail(doc: EventLeanDoc): EventDetail {
   return {
     ...toSummary(doc),
     ownerId: doc.ownerId.toString(),
+    theme: normalizeTheme(doc.theme),
+    template: normalizeTemplate(doc.template),
     date: toDateInputValue(instant, timeZone),
     time: toTimeInputValue(instant, timeZone),
     timeZone,

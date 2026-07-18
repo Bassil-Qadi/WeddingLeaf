@@ -25,6 +25,8 @@ import {
   type CreateEventInput,
 } from "@/lib/validations/event";
 import { STYLE_OPTIONS } from "@/lib/wedding-styles";
+import { THEME_OPTIONS, THEME_SWATCHES } from "@/lib/wedding-themes";
+import { TEMPLATE_OPTIONS } from "@/lib/wedding-templates";
 import {
   TIME_ZONE_OPTIONS,
   defaultTimeZoneForStyle,
@@ -62,6 +64,8 @@ interface EventFormProps {
 const EMPTY_DEFAULTS: CreateEventInput = {
   slug: "",
   style: "jordanian",
+  theme: "classic",
+  template: "thread",
   groomName: "",
   brideName: "",
   date: "",
@@ -200,7 +204,9 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             <SectionIcon icon={Heart} />
             معلومات العروسين
           </CardTitle>
-          <CardDescription>الأسماء ونمط الدعوة والرابط العام</CardDescription>
+          <CardDescription>
+            الأسماء والمنطقة وتصميم الدعوة والرابط العام
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
@@ -240,7 +246,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="style">نمط الدعوة</Label>
+            <Label htmlFor="style">المنطقة</Label>
             <Controller
               control={control}
               name="style"
@@ -276,6 +282,63 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
                 </Select>
               )}
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="template">تصميم الدعوة</Label>
+            <Controller
+              control={control}
+              name="template"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="template" className="w-full">
+                    <SelectValue placeholder="اختر التصميم" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TEMPLATE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <p className="text-xs text-muted-foreground">
+              يختار شكل الدعوة وتجربتها — عاينها من زر «معاينة» بعد الحفظ
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="theme">ألوان الدعوة</Label>
+            <Controller
+              control={control}
+              name="theme"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="theme" className="w-full">
+                    <SelectValue placeholder="اختر الألوان" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {THEME_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        <span className="flex items-center gap-2">
+                          <span
+                            aria-hidden="true"
+                            className="size-3 shrink-0 rounded-full border border-black/10"
+                            style={{ background: THEME_SWATCHES[option.value] }}
+                          />
+                          {option.label}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <p className="text-xs text-muted-foreground">
+              مجموعة الألوان التي تُطبَّق على التصميم الذي اخترته
+            </p>
           </div>
         </CardContent>
       </Card>

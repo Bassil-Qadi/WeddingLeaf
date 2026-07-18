@@ -6,6 +6,8 @@ import {
   formatArabicDateDetail,
 } from "@/lib/date";
 import { getGuestByToken, markGuestOpened } from "@/services/guests";
+import { normalizeTheme } from "@/lib/wedding-themes";
+import { normalizeTemplate } from "@/lib/wedding-templates";
 import type { InvitationData } from "@/features/invitation/types";
 
 /**
@@ -44,6 +46,8 @@ export async function getInvitationBySlug(
   return {
     slug: doc.slug,
     style: doc.style,
+    theme: normalizeTheme(doc.theme),
+    template: normalizeTemplate(doc.template),
     groomName: doc.groomName,
     brideName: doc.brideName,
     dateISO: instant.toISOString(),

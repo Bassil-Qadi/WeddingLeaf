@@ -1,4 +1,8 @@
-import type { WeddingStyle } from "@/types/invitation";
+import type {
+  WeddingStyle,
+  WeddingTheme,
+  WeddingTemplate,
+} from "@/types/invitation";
 
 export interface InvitationScheduleItem {
   /** Display-ready time in Arabic-Indic digits, e.g. "٨:٠٠". */
@@ -36,6 +40,10 @@ export interface InvitationGuest {
 export interface InvitationData {
   slug: string;
   style: WeddingStyle;
+  /** The visual register — selects the `.gt[data-theme]` palette. */
+  theme: WeddingTheme;
+  /** The layout — selects which invitation experience renders (see dispatcher). */
+  template: WeddingTemplate;
 
   groomName: string;
   brideName: string;

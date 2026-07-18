@@ -11,6 +11,8 @@ import type { InvitationData } from "../types";
 export const SAMPLE_INVITATION: InvitationData = {
   slug: "sara-omar",
   style: "gulf",
+  theme: "classic",
+  template: "thread",
 
   brideName: "سارة",
   groomName: "عمر",

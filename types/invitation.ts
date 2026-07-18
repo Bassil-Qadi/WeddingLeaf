@@ -1,9 +1,31 @@
+/**
+ * The regional axis: it drives *localization*, not looks — which Arabic month
+ * names print ("تشرين الثاني" vs "نوفمبر") and the default ceremony timezone.
+ * See `lib/date.ts`. For the visual look, see {@link WeddingTheme}.
+ */
 export type WeddingStyle =
   | "jordanian"
   | "gulf"
   | "palestinian"
   | "lebanese"
   | "egyptian";
+
+/**
+ * The visual axis: the invitation's palette and mood. Independent of the
+ * layout — a theme only swaps the colours (see the `.gt[data-theme]` blocks in
+ * `app/globals.css`), so it recolours whichever {@link WeddingTemplate} the
+ * couple picked without touching structure.
+ */
+export type WeddingTheme = "classic" | "modern" | "opulent" | "romantic";
+
+/**
+ * The layout axis: which invitation *experience* renders — the whole structure,
+ * section order, and motion, not just colours. `thread` is the cinematic
+ * veil-and-golden-thread scroll the design was cut against; `card` is a single
+ * formal panel. Chosen independently of {@link WeddingTheme}, so any layout can
+ * wear any palette. The dispatcher lives in `invitation-experience.tsx`.
+ */
+export type WeddingTemplate = "thread" | "card";
 
 export interface InvitationScheduleItem {
   id: string;
@@ -14,6 +36,8 @@ export interface InvitationScheduleItem {
 export interface Invitation {
   slug: string;
   style: WeddingStyle;
+  theme: WeddingTheme;
+  template: WeddingTemplate;
 
   groomName: string;
   brideName: string;

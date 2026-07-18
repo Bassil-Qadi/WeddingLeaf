@@ -38,6 +38,8 @@ export const createEventSchema = z.object({
     "lebanese",
     "egyptian",
   ]),
+  theme: z.enum(["classic", "modern", "opulent", "romantic"]),
+  template: z.enum(["thread", "card"]),
   groomName: z.string().min(2, { message: "اسم العريس مطلوب" }),
   brideName: z.string().min(2, { message: "اسم العروس مطلوب" }),
 
