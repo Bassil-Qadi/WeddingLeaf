@@ -26,7 +26,7 @@ import {
 } from "@/lib/validations/event";
 import { STYLE_OPTIONS } from "@/lib/wedding-styles";
 import { THEME_OPTIONS, THEME_SWATCHES } from "@/lib/wedding-themes";
-import { TEMPLATE_OPTIONS } from "@/lib/wedding-templates";
+import { TemplatePicker } from "@/features/dashboard/components/template-picker";
 import {
   TIME_ZONE_OPTIONS,
   defaultTimeZoneForStyle,
@@ -128,17 +128,19 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
 
   // The couple never types the Arabic date — they pick a day, an hour and a
   // city, and see exactly what the invitation will print.
-  const [style, date, time, timeZone, rsvpEnabled, allowOpenRsvp] = useWatch({
-    control,
-    name: [
-      "style",
-      "date",
-      "time",
-      "timeZone",
-      "rsvpEnabled",
-      "allowOpenRsvp",
-    ],
-  });
+  const [style, theme, date, time, timeZone, rsvpEnabled, allowOpenRsvp] =
+    useWatch({
+      control,
+      name: [
+        "style",
+        "theme",
+        "date",
+        "time",
+        "timeZone",
+        "rsvpEnabled",
+        "allowOpenRsvp",
+      ],
+    });
 
   const preview =
     date && time && timeZone
@@ -284,24 +286,17 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="template">تصميم الدعوة</Label>
+          <div className="flex flex-col gap-2 sm:col-span-2">
+            <Label>تصميم الدعوة</Label>
             <Controller
               control={control}
               name="template"
               render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger id="template" className="w-full">
-                    <SelectValue placeholder="اختر التصميم" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TEMPLATE_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <TemplatePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  accent={THEME_SWATCHES[theme ?? "classic"]}
+                />
               )}
             />
             <p className="text-xs text-muted-foreground">
@@ -309,7 +304,7 @@ export function EventForm({ mode, eventId, defaultValues }: EventFormProps) {
             </p>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 sm:col-span-2">
             <Label htmlFor="theme">ألوان الدعوة</Label>
             <Controller
               control={control}
