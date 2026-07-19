@@ -55,7 +55,7 @@ import {
       // palette. The dispatcher is in invitation-experience.tsx.
       template: {
         type: String,
-        enum: ["thread", "card"],
+        enum: ["thread", "card", "album"],
         default: "thread",
       },
 

@@ -24,7 +24,11 @@ interface TemplatePickerProps {
  */
 export function TemplatePicker({ value, onChange, accent }: TemplatePickerProps) {
   return (
-    <div role="radiogroup" aria-label="تصميم الدعوة" className="grid grid-cols-2 gap-3">
+    <div
+      role="radiogroup"
+      aria-label="تصميم الدعوة"
+      className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+    >
       {TEMPLATE_OPTIONS.map((option) => {
         const selected = option.value === value;
         return (
@@ -71,7 +75,9 @@ export function TemplatePicker({ value, onChange, accent }: TemplatePickerProps)
 
 /** Dispatch to the right wireframe. `currentColor` carries the palette accent. */
 function TemplateThumb({ template }: { template: WeddingTemplate }) {
-  return template === "card" ? <CardThumb /> : <ThreadThumb />;
+  if (template === "card") return <CardThumb />;
+  if (template === "album") return <AlbumThumb />;
+  return <ThreadThumb />;
 }
 
 /** A vertical thread with nodes and staggered chapter bars — the scroll layout. */
@@ -101,6 +107,35 @@ function ThreadThumb() {
           </span>
         </span>
       ))}
+    </span>
+  );
+}
+
+/** A photo block over alternating image/text bands — the album layout. */
+function AlbumThumb() {
+  return (
+    <span aria-hidden="true" className="absolute inset-0 flex flex-col" dir="rtl">
+      {/* the full-bleed cover, with the names sitting low over it */}
+      <span className="relative flex h-[52%] w-full items-end justify-center bg-current opacity-90">
+        <span className="mb-2 h-1.5 w-12 rounded-full bg-white/85" />
+      </span>
+      {/* alternating bands beneath it */}
+      <span className="flex flex-1 flex-col justify-center gap-1.5 px-2.5">
+        <span className="flex items-center gap-1.5">
+          <span className="h-5 w-5 shrink-0 rounded-[2px] bg-current opacity-45" />
+          <span className="flex flex-1 flex-col gap-1">
+            <span className="h-1 w-full rounded-full bg-foreground/20" />
+            <span className="h-1 w-2/3 rounded-full bg-foreground/15" />
+          </span>
+        </span>
+        <span className="flex flex-row-reverse items-center gap-1.5">
+          <span className="h-5 w-5 shrink-0 rounded-[2px] bg-current opacity-45" />
+          <span className="flex flex-1 flex-col items-end gap-1">
+            <span className="h-1 w-full rounded-full bg-foreground/20" />
+            <span className="h-1 w-2/3 rounded-full bg-foreground/15" />
+          </span>
+        </span>
+      </span>
     </span>
   );
 }

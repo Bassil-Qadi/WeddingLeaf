@@ -7,12 +7,14 @@ import type { WeddingTemplate } from "@/types/invitation";
 export const TEMPLATE_LABELS: Record<WeddingTemplate, string> = {
   thread: "الخيط الذهبي",
   card: "البطاقة",
+  album: "الألبوم",
 };
 
 /** A one-line hint under each option, so the choice reads without a preview. */
 export const TEMPLATE_DESCRIPTIONS: Record<WeddingTemplate, string> = {
   thread: "تجربة سينمائية بخيط ذهبي يتكشّف فصلًا فصلًا",
   card: "بطاقة رسمية بصفحة واحدة — مباشرة وأنيقة",
+  album: "الصور هي البطلة — يبرز أكثر مع صور مرفوعة",
 };
 
 export const TEMPLATE_OPTIONS: { value: WeddingTemplate; label: string }[] =
@@ -23,5 +25,5 @@ export const TEMPLATE_OPTIONS: { value: WeddingTemplate; label: string }[] =
 
 /** Old events (and anything with a value we no longer ship) render as Thread. */
 export function normalizeTemplate(value: unknown): WeddingTemplate {
-  return value === "card" ? "card" : "thread";
+  return value === "card" || value === "album" ? value : "thread";
 }

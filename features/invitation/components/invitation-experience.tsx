@@ -1,4 +1,5 @@
 import type { InvitationData } from "../types";
+import { AlbumTemplate } from "./album-template";
 import { CardTemplate } from "./card-template";
 import { ThreadTemplate } from "./thread-template";
 
@@ -20,6 +21,8 @@ export function InvitationExperience({
   switch (invitation.template) {
     case "card":
       return <CardTemplate invitation={invitation} />;
+    case "album":
+      return <AlbumTemplate invitation={invitation} />;
     case "thread":
     default:
       return <ThreadTemplate invitation={invitation} />;

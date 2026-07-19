@@ -25,7 +25,7 @@ export type WeddingTheme = "classic" | "modern" | "opulent" | "romantic";
  * formal panel. Chosen independently of {@link WeddingTheme}, so any layout can
  * wear any palette. The dispatcher lives in `invitation-experience.tsx`.
  */
-export type WeddingTemplate = "thread" | "card";
+export type WeddingTemplate = "thread" | "card" | "album";
 
 export interface InvitationScheduleItem {
   id: string;
