@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ArrowLeft, CalendarPlus, MailCheck } from "lucide-react";
 
+import { cloudinaryLoader } from "@/lib/cloudinary-loader";
 import type { InvitationData } from "../types";
 import { resolveInvitation } from "../lib/resolve-invitation";
 import { toArabicDigits } from "../lib/arabic";
@@ -54,8 +55,9 @@ export function CardTemplate({ invitation }: { invitation: InvitationData }) {
                   alt={`${data.brideName} و${data.groomName}`}
                   width={112}
                   height={112}
+                  sizes="112px"
                   className="size-full rounded-full object-cover"
-                  unoptimized
+                  loader={cloudinaryLoader}
                 />
               </div>
             )}

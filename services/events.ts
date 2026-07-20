@@ -21,6 +21,7 @@ import type {
 } from "@/types/invitation";
 import { normalizeTheme } from "@/lib/wedding-themes";
 import { normalizeTemplate } from "@/lib/wedding-templates";
+import { deleteEventImage } from "@/lib/storage";
 
 export interface EventSummary {
   id: string;
@@ -260,9 +261,11 @@ export async function updateEvent(
   await connectToDatabase();
 
   const current = await Event.findOne({ _id: id, ownerId })
-    .select("date timeZone")
+    .select("date timeZone coverImageUrl galleryImages")
     .lean();
   if (!current) return null;
+
+  const imagesBefore = collectImageUrls(current);
 
   const update = toStoredFields(input, {
     date: new Date(current.date),
@@ -281,7 +284,44 @@ export async function updateEvent(
 
   if (!doc) return null;
 
+  await deleteOrphanedImages(imagesBefore, collectImageUrls(doc), ownerId);
+
   return toDetail(doc);
+}
+
+/** Every image URL an event document currently points at. */
+function collectImageUrls(doc: {
+  coverImageUrl?: string | null;
+  galleryImages?: string[] | null;
+}): string[] {
+  return [doc.coverImageUrl, ...(doc.galleryImages ?? [])].filter(
+    (url): url is string => typeof url === "string" && url.length > 0,
+  );
+}
+
+/**
+ * Drops the files an edit just orphaned. Storage is metered, so an image the
+ * couple removed from their gallery must stop costing them — the URL leaving
+ * the document is the only signal that happens.
+ *
+ * Compares against the *saved* document rather than the request body so it is
+ * correct however the edit arrived, and never deletes a URL still referenced
+ * (a cover promoted out of the gallery, say). Failures are swallowed inside
+ * `deleteEventImage`: a stranded file is a cost problem, but a failed edit is
+ * a user problem, and the user's edit already succeeded by this point.
+ */
+async function deleteOrphanedImages(
+  before: string[],
+  after: string[],
+  ownerId: string,
+): Promise<void> {
+  const kept = new Set(after);
+  const orphaned = before.filter((url) => !kept.has(url));
+  if (orphaned.length === 0) return;
+
+  await Promise.allSettled(
+    orphaned.map((url) => deleteEventImage(url, ownerId)),
+  );
 }
 
 export async function setEventPublished(

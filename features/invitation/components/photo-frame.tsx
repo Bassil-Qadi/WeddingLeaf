@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { cloudinaryLoader } from "@/lib/cloudinary-loader";
 
 interface PhotoFrameProps {
   src?: string;
@@ -20,9 +21,10 @@ interface PhotoFrameProps {
  * A matte gold frame — a hairline border with a paper mount inside, and
  * optional corner accents that lift off the frame like photo mounts.
  *
- * Images come from the couple's uploads, so they are arbitrary remote URLs:
- * `unoptimized` keeps them out of the optimizer, which would otherwise
- * reject any hostname not listed in `next.config.ts`.
+ * Images come from the couple's uploads, so they are arbitrary remote URLs.
+ * `cloudinaryLoader` sizes them at the CDN rather than through Next's
+ * optimizer, which would otherwise reject any hostname not listed in
+ * `next.config.ts`.
  */
 export function PhotoFrame({
   src,
@@ -47,7 +49,7 @@ export function PhotoFrame({
               src={src}
               alt={alt}
               fill
-              unoptimized
+              loader={cloudinaryLoader}
               sizes="(max-width: 680px) 100vw, 340px"
               className="object-cover"
             />

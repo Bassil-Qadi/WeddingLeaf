@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ArrowLeft, CalendarPlus, MailCheck } from "lucide-react";
 
+import { cloudinaryLoader } from "@/lib/cloudinary-loader";
 import type { InvitationData } from "../types";
 import { resolveInvitation } from "../lib/resolve-invitation";
 import { Grain, Wordmark } from "./ambient";
@@ -59,7 +60,7 @@ export function AlbumTemplate({ invitation }: { invitation: InvitationData }) {
               priority
               sizes="100vw"
               className="object-cover"
-              unoptimized
+              loader={cloudinaryLoader}
             />
             {/* Scrim: the names have to stay legible over an unknown photo. */}
             <div
@@ -176,7 +177,7 @@ export function AlbumTemplate({ invitation }: { invitation: InvitationData }) {
                       fill
                       sizes="(min-width: 640px) 300px, 50vw"
                       className="object-cover"
-                      unoptimized
+                      loader={cloudinaryLoader}
                     />
                   </div>
                 ))}
@@ -279,7 +280,7 @@ function Band({
               fill
               sizes="(min-width: 640px) 380px, 100vw"
               className="object-cover"
-              unoptimized
+              loader={cloudinaryLoader}
             />
           </div>
         ) : (
