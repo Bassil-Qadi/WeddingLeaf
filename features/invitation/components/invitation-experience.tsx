@@ -1,6 +1,7 @@
 import type { InvitationData } from "../types";
 import { AlbumTemplate } from "./album-template";
 import { CardTemplate } from "./card-template";
+import { RoyalTemplate } from "./royal-template";
 import { ThreadTemplate } from "./thread-template";
 
 /**
@@ -23,6 +24,14 @@ export function InvitationExperience({
       return <CardTemplate invitation={invitation} />;
     case "album":
       return <AlbumTemplate invitation={invitation} />;
+    // The three "royal" layouts share one story and one cover component; only
+    // the opening animation differs, carried by `treatment`.
+    case "envelope":
+    case "doors":
+    case "veil":
+      return (
+        <RoyalTemplate invitation={invitation} treatment={invitation.template} />
+      );
     case "thread":
     default:
       return <ThreadTemplate invitation={invitation} />;

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e6e1d6;font-family:'Jost',system-ui,sans-serif}
+a{color:#9a723c}a:hover{color:#7d5c2d}
+@keyframes ringP{0%{transform:scale(1);opacity:.5}70%{transform:scale(1.55);opacity:0}100%{opacity:0}}
+@keyframes tapH{0%,100%{opacity:.5}50%{opacity:1}}
+</style>
+</helmet>
+
+<section style="padding:44px 48px 30px; max-width:900px; box-sizing:border-box">
+  <div style="font-family:'Jost'; font-weight:500; font-size:10px; letter-spacing:.34em; text-transform:uppercase; color:#9a723c">Invitation Card &mdash; Guest View</div>
+  <div style="font-family:'Cormorant Garamond'; font-weight:500; font-size:38px; color:#2c2620; margin:8px 0 14px; line-height:1.05">The opening moment, three ways</div>
+  <div style="font-family:'EB Garamond',Georgia,serif; font-size:16px; color:#5d554b; line-height:1.6; max-width:660px">Each phone shows the same cinematic scroll story &mdash; the difference is the cover the guest taps to begin. Tap the gold seal on any card to open it; use the &#8635; button to replay. Direction: warm ivory &amp; gold, Cormorant Garamond over Jost, slow weighty motion.</div>
+  <div style="display:flex; gap:22px; margin-top:18px; font-family:'Jost'; font-size:11px; letter-spacing:.06em; color:#5d554b">
+    <span><a href="#1a" style="text-decoration:none; font-weight:500">1a</a> &nbsp;Envelope &amp; wax seal</span>
+    <span><a href="#1b" style="text-decoration:none; font-weight:500">1b</a> &nbsp;Parting doors</span>
+    <span><a href="#1c" style="text-decoration:none; font-weight:500">1c</a> &nbsp;Veil lift</span>
+  </div>
+</section>
+
+<section id="t1" style="padding:8px 48px 60px">
+  <div style="display:flex; flex-wrap:wrap; gap:44px; align-items:flex-start">
+
+    <div id="1a" style="display:flex; flex-direction:column; gap:12px; scroll-margin-top:16px">
+      <div style="display:flex; align-items:baseline; gap:9px"><span style="font-family:'Jost'; font-weight:500; font-size:10.5px; padding:3px 8px; background:#2c2620; color:#f6f1e9; border-radius:5px">1a</span><span style="font-family:'Jost'; font-size:12px; letter-spacing:.04em; color:#5d554b">Envelope &amp; wax seal</span></div>
+      <div style="width:384px; height:764px; background:#141210; border-radius:46px; padding:12px; box-sizing:border-box; box-shadow:0 26px 60px -18px rgba(0,0,0,.5), inset 0 0 0 2px #2a2622">
+        <div style="position:relative; width:100%; height:100%; border-radius:35px; overflow:hidden; background:#f6f1e9">
+          <div style="position:absolute; top:11px; left:50%; transform:translateX(-50%); width:104px; height:26px; background:#141210; border-radius:0 0 16px 16px; z-index:8"></div>
+          <div style="{{ aStory }}"><dc-import name="InviteStory" accent="{{ accent }}" hint-size="100%,100%"></dc-import></div>
+          <div onClick="{{ resetA }}" style="{{ aReset }}">&#8635;</div>
+          <div style="{{ aCoverAnim }}">
+            <div style="position:absolute; inset:0; background:linear-gradient(158deg,#f4ecdd 0%,#ecdfc7 100%); overflow:hidden">
+              <div style="position:absolute; inset:18px; border:1px solid rgba(176,137,79,.45)"></div>
+              <div style="position:absolute; bottom:120px; left:0; right:0; text-align:center; font-family:'Jost'; font-size:9px; letter-spacing:.34em; text-transform:uppercase; color:rgba(44,38,32,.4)">The pleasure of your company</div>
+              <div style="position:absolute; bottom:74px; left:0; right:0; text-align:center; font-family:'Cormorant Garamond'; font-style:italic; font-size:26px; color:rgba(154,114,60,.65)">Isabella &amp; James</div>
+              <div style="{{ aFlapAnim }}">
+                <div style="width:0; height:0; margin:0 auto; border-left:180px solid transparent; border-right:180px solid transparent; border-top:172px solid #ead9bc; filter:drop-shadow(0 4px 6px rgba(0,0,0,.12))"></div>
+              </div>
+              <div style="position:absolute; top:150px; left:50%; width:0; height:0">
+                <div style="position:absolute; left:-46px; top:-46px; width:92px; height:92px; border-radius:50%; border:1px solid rgba(176,137,79,.6); animation:ringP 2.6s ease-out infinite"></div>
+                <div style="position:absolute; left:-46px; top:-46px; width:92px; height:92px; border-radius:50%; border:1px solid rgba(176,137,79,.6); animation:ringP 2.6s ease-out infinite 1.3s"></div>
+                <div onClick="{{ openA }}" style="{{ aSealAnim }}">
+                  <div style="width:92px; height:92px; border-radius:50%; background:radial-gradient(circle at 38% 32%,#e3c589,#a5762f 78%); box-shadow:0 10px 24px rgba(74,50,15,.4), inset 0 2px 3px rgba(255,255,255,.45), inset 0 -3px 6px rgba(74,50,15,.4); display:flex; align-items:center; justify-content:center; cursor:pointer">
+                    <span style="font-family:'Cormorant Garamond'; font-style:italic; font-size:30px; color:#4a3212">I&amp;J</span>
+                  </div>
+                </div>
+              </div>
+              <div style="{{ aHint }}"><div style="position:absolute; top:216px; left:0; right:0; text-align:center; font-family:'Jost'; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:rgba(44,38,32,.55); animation:tapH 2s ease-in-out infinite">Tap the seal to open</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex; flex-direction:column; gap:12px; scroll-margin-top:16px">
+      <div style="display:flex; align-items:baseline; gap:9px"><span style="font-family:'Jost'; font-weight:500; font-size:10.5px; padding:3px 8px; background:#2c2620; color:#f6f1e9; border-radius:5px">1b</span><span style="font-family:'Jost'; font-size:12px; letter-spacing:.04em; color:#5d554b">Parting doors</span></div>
+      <div style="width:384px; height:764px; background:#141210; border-radius:46px; padding:12px; box-sizing:border-box; box-shadow:0 26px 60px -18px rgba(0,0,0,.5), inset 0 0 0 2px #2a2622">
+        <div style="position:relative; width:100%; height:100%; border-radius:35px; overflow:hidden; background:#f6f1e9">
+          <div style="position:absolute; top:11px; left:50%; transform:translateX(-50%); width:104px; height:26px; background:#141210; border-radius:0 0 16px 16px; z-index:8"></div>
+          <div style="{{ bStory }}"><dc-import name="InviteStory" accent="{{ accent }}" hint-size="100%,100%"></dc-import></div>
+          <div onClick="{{ resetB }}" style="{{ bReset }}">&#8635;</div>
+          <div style="{{ bLeftAnim }}">
+            <div style="position:absolute; inset:0; background:linear-gradient(100deg,#232d27,#2e3a32); border-right:1px solid rgba(176,137,79,.55); overflow:hidden">
+              <div style="position:absolute; top:22px; bottom:22px; right:14px; width:1px; background:rgba(176,137,79,.4)"></div>
+              <div style="position:absolute; top:50%; right:20px; transform:translateY(-50%); font-family:'Cormorant Garamond'; font-style:italic; font-size:150px; color:rgba(176,137,79,.14); line-height:1">I</div>
+            </div>
+          </div>
+          <div style="{{ bRightAnim }}">
+            <div style="position:absolute; inset:0; background:linear-gradient(260deg,#232d27,#2e3a32); border-left:1px solid rgba(176,137,79,.55); overflow:hidden">
+              <div style="position:absolute; top:22px; bottom:22px; left:14px; width:1px; background:rgba(176,137,79,.4)"></div>
+              <div style="position:absolute; top:50%; left:20px; transform:translateY(-50%); font-family:'Cormorant Garamond'; font-style:italic; font-size:150px; color:rgba(176,137,79,.14); line-height:1">J</div>
+            </div>
+          </div>
+          <div style="{{ bBtnAnim }}">
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:22px">
+              <div style="font-family:'Jost'; font-size:9px; letter-spacing:.4em; text-transform:uppercase; color:rgba(246,241,233,.6)">You are invited to the wedding of</div>
+              <div style="font-family:'Cormorant Garamond'; font-weight:500; font-size:34px; color:#f6f1e9; text-align:center; line-height:1.15">Isabella<br><span style="font-style:italic; color:#d8b878; font-size:24px">and</span><br>James</div>
+              <div style="position:relative; width:92px; height:92px">
+                <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(216,184,120,.6); animation:ringP 2.6s ease-out infinite"></div>
+                <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(216,184,120,.6); animation:ringP 2.6s ease-out infinite 1.3s"></div>
+                <div onClick="{{ openB }}" style="position:relative; width:92px; height:92px; border-radius:50%; background:radial-gradient(circle at 38% 32%,#e3c589,#a5762f 78%); box-shadow:0 10px 24px rgba(0,0,0,.4), inset 0 2px 3px rgba(255,255,255,.45); display:flex; align-items:center; justify-content:center; cursor:pointer">
+                  <span style="font-family:'Cormorant Garamond'; font-style:italic; font-size:30px; color:#4a3212">I&amp;J</span>
+                </div>
+              </div>
+              <div style="{{ bHint }}"><div style="font-family:'Jost'; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:rgba(216,184,120,.85); animation:tapH 2s ease-in-out infinite">Tap to enter</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1c" style="display:flex; flex-direction:column; gap:12px; scroll-margin-top:16px">
+      <div style="display:flex; align-items:baseline; gap:9px"><span style="font-family:'Jost'; font-weight:500; font-size:10.5px; padding:3px 8px; background:#2c2620; color:#f6f1e9; border-radius:5px">1c</span><span style="font-family:'Jost'; font-size:12px; letter-spacing:.04em; color:#5d554b">Veil lift</span></div>
+      <div style="width:384px; height:764px; background:#141210; border-radius:46px; padding:12px; box-sizing:border-box; box-shadow:0 26px 60px -18px rgba(0,0,0,.5), inset 0 0 0 2px #2a2622">
+        <div style="position:relative; width:100%; height:100%; border-radius:35px; overflow:hidden; background:#f6f1e9">
+          <div style="position:absolute; top:11px; left:50%; transform:translateX(-50%); width:104px; height:26px; background:#141210; border-radius:0 0 16px 16px; z-index:8"></div>
+          <div style="{{ cStory }}"><dc-import name="InviteStory" accent="{{ accent }}" hint-size="100%,100%"></dc-import></div>
+          <div onClick="{{ resetC }}" style="{{ cReset }}">&#8635;</div>
+          <div style="{{ cVeilAnim }}">
+            <div style="position:absolute; inset:0; background:linear-gradient(158deg,#2b2620,#201b16); overflow:hidden">
+              <div style="position:absolute; inset:0; background:linear-gradient(105deg,transparent 30%,rgba(216,184,120,.09) 50%,transparent 70%)"></div>
+              <div style="position:absolute; inset:18px; border:1px solid rgba(176,137,79,.35)"></div>
+              <div style="{{ cInnerAnim }}">
+                <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; padding:40px; box-sizing:border-box">
+                  <div style="font-family:'Jost'; font-size:9px; letter-spacing:.4em; text-transform:uppercase; color:rgba(246,241,233,.6)">Together with their families</div>
+                  <div style="font-family:'Cormorant Garamond'; font-weight:500; font-size:72px; color:#d8b878; line-height:.9; text-align:center">I<span style="font-style:italic; font-size:44px; display:inline-block; margin:0 4px">&amp;</span>J</div>
+                  <div style="display:flex; align-items:center; gap:11px"><span style="width:38px; height:1px; background:rgba(216,184,120,.7)"></span><span style="width:5px; height:5px; background:#d8b878; transform:rotate(45deg)"></span><span style="width:38px; height:1px; background:rgba(216,184,120,.7)"></span></div>
+                  <div style="position:relative; width:92px; height:92px; margin-top:6px">
+                    <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(216,184,120,.6); animation:ringP 2.6s ease-out infinite"></div>
+                    <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(216,184,120,.6); animation:ringP 2.6s ease-out infinite 1.3s"></div>
+                    <div onClick="{{ openC }}" style="position:relative; width:92px; height:92px; border-radius:50%; background:radial-gradient(circle at 38% 32%,#e3c589,#a5762f 78%); box-shadow:0 10px 24px rgba(0,0,0,.45), inset 0 2px 3px rgba(255,255,255,.45); display:flex; align-items:center; justify-content:center; cursor:pointer">
+                      <span style="font-family:'Jost'; font-size:9px; font-weight:500; letter-spacing:.24em; text-transform:uppercase; color:#4a3212">Open</span>
+                    </div>
+                  </div>
+                  <div style="{{ cHint }}"><div style="font-family:'Jost'; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:rgba(216,184,120,.85); animation:tapH 2s ease-in-out infinite">Tap to unveil</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <p style="margin:34px 0 0; font-family:'EB Garamond',Georgia,serif; font-size:14px; color:#7a7266; max-width:640px; line-height:1.5">Try next: &ldquo;combine the veil of <a href="#1c" style="text-decoration:none">1c</a> with the doors of <a href="#1b" style="text-decoration:none">1b</a>&rdquo; &middot; &ldquo;add a gold shimmer sweep on open&rdquo; &middot; &ldquo;show the envelope <a href="#1a" style="text-decoration:none">1a</a> full-screen, not in a phone&rdquo;</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#b0894f&quot;,&quot;options&quot;:[&quot;#b0894f&quot;,&quot;#8a7d63&quot;,&quot;#6f7d6a&quot;,&quot;#7a5c56&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Style&quot;},&quot;showHint&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  state = { o: { a:false, b:false, c:false } };
+  renderVals(){
+    const ac = this.props.accent || '#b0894f';
+    const hint = this.props.showHint !== false;
+    const rm = !!this.props.reducedMotion;
+    const O = this.state.o;
+    const D = rm ? 0.5 : 1.6;
+    const F = rm ? 0.4 : 0.95;
+    const S = rm ? 0.35 : 0.5;
+    const ease = 'cubic-bezier(.7,0,.15,1)';
+    const set = (k,v) => () => this.setState(s => ({ o: { ...s.o, [k]: v } }));
+    const story = open => ({ position:'absolute', inset:0, height:'100%', width:'100%', transform: open?'scale(1)':'scale(1.06)', transition:`transform ${rm?0.6:1.9}s cubic-bezier(.2,0,0,1)` });
+    const reset = open => ({ position:'absolute', top:'46px', right:'16px', zIndex:7, width:'34px', height:'34px', borderRadius:'50%', background:'rgba(20,18,16,.5)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', color:'#f6f1e9', fontSize:'15px', opacity: open?1:0, transform: open?'scale(1)':'scale(.8)', pointerEvents: open?'auto':'none', transition:`opacity .5s ease ${open?'.45s':'0s'}, transform .5s ease ${open?'.45s':'0s'}` });
+    const hintStyle = open => ({ opacity: (hint && !open) ? 1 : 0, transition:'opacity .4s ease' });
+    return {
+      accent: ac,
+      openA: set('a',true), openB: set('b',true), openC: set('c',true),
+      resetA: set('a',false), resetB: set('b',false), resetC: set('c',false),
+      aStory: story(O.a), bStory: story(O.b), cStory: story(O.c),
+      aReset: reset(O.a), bReset: reset(O.b), cReset: reset(O.c),
+      aHint: hintStyle(O.a), bHint: hintStyle(O.b), cHint: hintStyle(O.c),
+      aCoverAnim: { position:'absolute', inset:0, transform: O.a?'translateY(122%)':'translateY(0)', pointerEvents: O.a?'none':'auto', transition:`transform ${D}s ${ease} ${O.a?F+'s':'0s'}` },
+      aFlapAnim: { position:'absolute', top:0, left:0, right:0, transformOrigin:'top center', transform: O.a?'rotateX(-176deg)':'rotateX(0deg)', transition:`transform ${F}s ${ease} ${O.a?'.12s':'0s'}` },
+      aSealAnim: { position:'absolute', left:'-46px', top:'-46px', opacity: O.a?0:1, transform: O.a?'scale(.2)':'scale(1)', transition:`opacity ${S}s ease, transform ${S}s ease` },
+      bLeftAnim: { position:'absolute', top:0, left:0, width:'50%', height:'100%', transform: O.b?'translateX(-101%)':'translateX(0)', pointerEvents: O.b?'none':'auto', transition:`transform ${D}s ${ease}` },
+      bRightAnim: { position:'absolute', top:0, right:0, width:'50%', height:'100%', transform: O.b?'translateX(101%)':'translateX(0)', pointerEvents: O.b?'none':'auto', transition:`transform ${D}s ${ease}` },
+      bBtnAnim: { position:'absolute', inset:0, opacity: O.b?0:1, transform: O.b?'scale(.9)':'scale(1)', pointerEvents: O.b?'none':'auto', transition:`opacity ${S}s ease, transform ${S}s ease` },
+      cVeilAnim: { position:'absolute', inset:0, transform: O.c?'translateY(-102%)':'translateY(0)', pointerEvents: O.c?'none':'auto', transition:`transform ${D}s ${ease}` },
+      cInnerAnim: { position:'absolute', inset:0, opacity: O.c?0:1, transition:`opacity ${S}s ease ${O.c?'0s':'.2s'}` },
+    };
+  }
+}
+</script>
+</body>
+</html>

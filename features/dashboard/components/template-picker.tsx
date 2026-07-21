@@ -77,6 +77,9 @@ export function TemplatePicker({ value, onChange, accent }: TemplatePickerProps)
 function TemplateThumb({ template }: { template: WeddingTemplate }) {
   if (template === "card") return <CardThumb />;
   if (template === "album") return <AlbumThumb />;
+  if (template === "envelope") return <EnvelopeThumb />;
+  if (template === "doors") return <DoorsThumb />;
+  if (template === "veil") return <VeilThumb />;
   return <ThreadThumb />;
 }
 
@@ -136,6 +139,73 @@ function AlbumThumb() {
           </span>
         </span>
       </span>
+    </span>
+  );
+}
+
+/**
+ * A wax-sealed envelope with its flap folded — the `envelope` royal cover. The
+ * three royal thumbnails all centre a round gold seal, so the family reads as
+ * one at a glance while each opening differs.
+ */
+function EnvelopeThumb() {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute inset-0 flex items-center justify-center p-2.5"
+    >
+      <span className="relative h-full w-[74%] overflow-hidden rounded-[3px] border border-current">
+        {/* the flap — a triangle meeting at the seal */}
+        <span
+          className="absolute inset-x-0 top-0 h-1/2 bg-current opacity-25"
+          style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }}
+        />
+        {/* inner hairline */}
+        <span className="pointer-events-none absolute inset-[3px] rounded-[2px] border border-current opacity-30" />
+        {/* the seal at the flap's tip */}
+        <Seal />
+      </span>
+    </span>
+  );
+}
+
+/** Two gilded panels parted around a seal — the `doors` royal cover. */
+function DoorsThumb() {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute inset-0 flex items-stretch justify-center gap-[3px] p-2.5"
+    >
+      <span className="relative flex-1 rounded-s-[3px] border border-current bg-current opacity-25" />
+      <span className="relative flex-1 rounded-e-[3px] border border-current bg-current opacity-25" />
+      {/* the seal on the seam */}
+      <Seal />
+    </span>
+  );
+}
+
+/** A veil half-lifted off a seal — the `veil` royal cover. */
+function VeilThumb() {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute inset-0 flex items-center justify-center p-2.5"
+    >
+      <span className="relative h-full w-[74%] overflow-hidden rounded-[3px] border border-current">
+        {/* the veil, lifted to reveal the lower half */}
+        <span className="absolute inset-x-0 top-0 h-[42%] bg-current opacity-30" />
+        <span className="absolute inset-x-0 top-[42%] h-px bg-current opacity-50" />
+        <Seal />
+      </span>
+    </span>
+  );
+}
+
+/** The shared round gold seal centred on every royal cover thumbnail. */
+function Seal() {
+  return (
+    <span className="absolute start-1/2 top-1/2 flex size-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-current shadow-sm">
+      <span className="size-1.5 rounded-full border border-white/70" />
     </span>
   );
 }

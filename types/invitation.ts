@@ -22,10 +22,22 @@ export type WeddingTheme = "classic" | "modern" | "opulent" | "romantic";
  * The layout axis: which invitation *experience* renders — the whole structure,
  * section order, and motion, not just colours. `thread` is the cinematic
  * veil-and-golden-thread scroll the design was cut against; `card` is a single
- * formal panel. Chosen independently of {@link WeddingTheme}, so any layout can
- * wear any palette. The dispatcher lives in `invitation-experience.tsx`.
+ * formal panel; `album` is photo-led. `envelope`/`doors`/`veil` are the three
+ * "royal" (الدعوة الملكية) layouts: one shared cover-reveal story, distinguished
+ * only by how the cover opens (see `royal-template.tsx`). Chosen independently of
+ * {@link WeddingTheme}, so any layout wears any palette. The dispatcher lives in
+ * `invitation-experience.tsx`.
  */
-export type WeddingTemplate = "thread" | "card" | "album";
+export type WeddingTemplate =
+  | "thread"
+  | "card"
+  | "album"
+  | "envelope"
+  | "doors"
+  | "veil";
+
+/** The three cover openings the royal layouts share, keyed by their template. */
+export type CoverTreatment = "envelope" | "doors" | "veil";
 
 export interface InvitationScheduleItem {
   id: string;
