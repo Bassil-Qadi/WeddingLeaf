@@ -80,6 +80,8 @@ function TemplateThumb({ template }: { template: WeddingTemplate }) {
   if (template === "envelope") return <EnvelopeThumb />;
   if (template === "doors") return <DoorsThumb />;
   if (template === "veil") return <VeilThumb />;
+  if (template === "gem") return <GemThumb />;
+  if (template === "aurelia") return <AureliaThumb />;
   return <ThreadThumb />;
 }
 
@@ -196,6 +198,60 @@ function VeilThumb() {
         <span className="absolute inset-x-0 top-0 h-[42%] bg-current opacity-30" />
         <span className="absolute inset-x-0 top-[42%] h-px bg-current opacity-50" />
         <Seal />
+      </span>
+    </span>
+  );
+}
+
+/**
+ * A faceted jewel glowing on a glass panel — the `gem` layout. A rotated square
+ * crossed by facet lines reads as a cut stone; the blurred halo behind it and
+ * the frosted plate stand in for the aura and glass of the real thing.
+ */
+function GemThumb() {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute inset-0 flex items-center justify-center p-2.5"
+    >
+      {/* glass plate */}
+      <span className="relative flex h-full w-[74%] items-center justify-center rounded-[6px] border border-current">
+        <span className="pointer-events-none absolute inset-0 rounded-[5px] bg-current opacity-[0.08]" />
+        {/* aura */}
+        <span className="absolute size-9 rounded-full bg-current opacity-25 blur-md" />
+        {/* the faceted stone */}
+        <span className="relative size-6 rotate-45 border border-current bg-current opacity-90">
+          <span className="absolute inset-0 border-b border-white/50" />
+          <span className="absolute inset-0 rotate-90 border-b border-white/40" />
+        </span>
+      </span>
+    </span>
+  );
+}
+
+/**
+ * A glowing ring portal on a dark cover — the `aurelia` layout. A blurred aura
+ * behind a hollow ring, with a couple of drifting light particles, stands in for
+ * the kinetic portal that zooms open into the story.
+ */
+function AureliaThumb() {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute inset-0 flex items-center justify-center p-2.5"
+    >
+      <span className="relative flex h-full w-[74%] items-center justify-center overflow-hidden rounded-[6px] border border-current">
+        {/* inset frame */}
+        <span className="pointer-events-none absolute inset-[3px] rounded-[4px] border border-current opacity-30" />
+        {/* aura bloom */}
+        <span className="absolute size-10 rounded-full bg-current opacity-25 blur-md" />
+        {/* the portal ring */}
+        <span className="relative flex size-7 items-center justify-center rounded-full border-2 border-current">
+          <span className="size-1.5 rounded-full bg-current opacity-80" />
+        </span>
+        {/* drifting particles */}
+        <span className="absolute bottom-2 start-3 size-1 rounded-full bg-current opacity-60" />
+        <span className="absolute bottom-4 end-3.5 size-[3px] rounded-full bg-current opacity-45" />
       </span>
     </span>
   );

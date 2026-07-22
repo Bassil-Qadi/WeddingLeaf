@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital@0;1&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+@keyframes stCue{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(7px);opacity:1}}
+@keyframes stHeart{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.st-scroll::-webkit-scrollbar{width:0;height:0}
+</style>
+</helmet>
+<div class="st-scroll" style="--a:{{ accent }}; height:100%; width:100%; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; background:#f6f1e9; color:#2c2620; font-family:'EB Garamond',Georgia,serif; box-sizing:border-box">
+
+  <section style="min-height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:70px 34px 54px; position:relative; box-sizing:border-box">
+    <div style="font-family:'Jost'; font-weight:500; font-size:10px; letter-spacing:.36em; text-transform:uppercase; color:var(--a,#b0894f)">Together with their families</div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:11px; margin:22px 0 8px">
+      <span style="width:34px; height:1px; background:var(--a,#b0894f); opacity:.7"></span>
+      <span style="width:5px; height:5px; background:var(--a,#b0894f); transform:rotate(45deg)"></span>
+      <span style="width:34px; height:1px; background:var(--a,#b0894f); opacity:.7"></span>
+    </div>
+    <h1 style="font-family:'Cormorant Garamond'; font-weight:500; color:#2c2620; margin:14px 0 0; line-height:.96">
+      <span style="display:block; font-size:56px; letter-spacing:.01em">Isabella</span>
+      <span style="display:block; font-style:italic; color:var(--a,#b0894f); font-size:38px; margin:4px 0; font-weight:400">&amp;</span>
+      <span style="display:block; font-size:56px; letter-spacing:.01em">James</span>
+    </h1>
+    <div style="max-width:238px; font-size:16px; font-style:italic; color:#6b6157; margin-top:24px; line-height:1.55">request the pleasure of your company as they celebrate their marriage</div>
+    <div style="margin-top:30px; width:148px; height:188px; border:1px solid var(--a,#b0894f); padding:7px; border-radius:2px; box-sizing:border-box">
+      <div style="width:100%; height:100%; background:repeating-linear-gradient(45deg,#e9e1d2,#e9e1d2 9px,#efe8dc 9px,#efe8dc 18px); display:flex; align-items:center; justify-content:center; font-family:'Jost'; font-size:9px; letter-spacing:.16em; color:#a89a84; text-transform:uppercase">couple photo</div>
+    </div>
+    <div style="position:absolute; bottom:22px; left:0; right:0; font-family:'Jost'; font-size:8.5px; letter-spacing:.3em; text-transform:uppercase; color:#a89a84; display:flex; flex-direction:column; align-items:center; gap:5px">Scroll<span style="animation:stCue 1.9s ease-in-out infinite; font-size:15px; color:var(--a,#b0894f)">&#8595;</span></div>
+  </section>
+
+  <section style="padding:66px 36px; text-align:center; box-sizing:border-box; border-top:1px solid rgba(44,38,32,.09)">
+    <div style="font-family:'Jost'; font-weight:500; font-size:10px; letter-spacing:.36em; text-transform:uppercase; color:var(--a,#b0894f)">Our Story</div>
+    <div style="font-family:'Cormorant Garamond'; font-weight:500; font-size:30px; margin:12px 0 34px">How it began</div>
+    <div style="display:flex; flex-direction:column; gap:30px; text-align:left; max-width:280px; margin:0 auto">
+      <div style="display:flex; gap:18px">
+        <div style="font-family:'Cormorant Garamond'; font-style:italic; font-size:26px; color:var(--a,#b0894f); min-width:52px">2018</div>
+        <div><div style="font-family:'Jost'; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#2c2620; margin-bottom:5px">A chance meeting</div><div style="font-size:15.5px; color:#6b6157; line-height:1.5">A rainy evening in a Florence bookshop, two hands reaching for the same worn novel.</div></div>
+      </div>
+      <div style="display:flex; gap:18px">
+        <div style="font-family:'Cormorant Garamond'; font-style:italic; font-size:26px; color:var(--a,#b0894f); min-width:52px">2021</div>
+        <div><div style="font-family:'Jost'; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#2c2620; margin-bottom:5px">The question</div><div style="font-size:15.5px; color:#6b6157; line-height:1.5">On the shores of Lake Como at golden hour, one knee, one ring, one certain yes.</div></div>
+      </div>
+      <div style="display:flex; gap:18px">
+        <div style="font-family:'Cormorant Garamond'; font-style:italic; font-size:26px; color:var(--a,#b0894f); min-width:52px">2026</div>
+        <div><div style="font-family:'Jost'; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#2c2620; margin-bottom:5px">Forever begins</div><div style="font-size:15.5px; color:#6b6157; line-height:1.5">Returning to where it all felt inevitable, to promise the rest of our days.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:64px 36px; text-align:center; box-sizing:border-box; background:#efe7d9">
+    <div style="font-family:'Jost'; font-weight:500; font-size:10px; letter-spacing:.36em; text-transform:uppercase; color:var(--a,#b0894f)">Save the Date</div>
+    <div style="font-family:'Cormorant Garamond'; font-weight:500; font-style:italic; font-size:22px; margin:16px 0 2px; color:#2c2620">Saturday</div>
+    <div style="font-family:'Cormorant Garamond'; font-weight:500; font-size:52px; line-height:1; color:#2c2620">17 &middot; 10</div>
+    <div style="font-family:'Jost'; font-size:11px; letter-spacing:.34em; text-transform:uppercase; color:#6b6157; margin-top:10px">October Two Thousand Twenty-Six</div>
+    <div style="display:flex; justify-content:center; gap:10px; margin-top:34px">
+      <div style="flex:1; max-width:66px; border:1px solid rgba(44,38,32,.14); padding:14px 0; border-radius:2px"><div style="font-family:'Cormorant Garamond'; font-size:30px; line-height:1; color:#2c2620">{{ days }}</div><div style="font-family:'Jost'; font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:#a89a84; margin-top:6px">Days</div></div>
+      <div style="flex:1; max-width:66px; border:1px solid rgba(44,38,32,.14); padding:14px 0; border-radius:2px"><div style="font-family:'Cormorant Garamond'; font-size:30px; line-height:1; color:#2c2620">{{ hours }}</div><div style="font-family:'Jost'; font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:#a89a84; margin-top:6px">Hrs</div></div>
+      <div style="flex:1; max-width:66px; border:1px solid rgba(44,38,32,.14); padding:14px 0; border-radius:2px"><div style="font-family:'Cormorant Garamond'; font-size:30px; line-height:1; color:#2c2620">{{ mins }}</div><div style="font-family:'Jost'; font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:#a89a84; margin-top:6px">Min</div></div>
+      <div style="flex:1; max-width:66px; border:1px solid rgba(44,38,32,.14); padding:14px 0; border-radius:2px"><div style="font-family:'Cormorant Garamond'; font-size:30px; line-height:1; color:var(--a,#b0894f)">{{ secs }}</div><div style="font-family:'Jost'; font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:#a89a84; margin-top:6px">Sec</div></div>
+    </div>
+  </section>
+
+  <section style="padding:66px 36px; text-align:center; box-sizing:border-box">
+    <div style="font-family:'Jost'; font-weight:500; font-size:10px; letter-spacing:.36em; text-transform:uppercase; color:var(--a,#b0894f)">The Ceremony</div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:11px; margin:22px 0">
+      <span style="width:34px; height:1px; background:var(--a,#b0894f); opacity:.7"></span>
+      <span style="width:5px; height:5px; background:var(--a,#b0894f); transform:rotate(45deg)"></span>
+      <span style="width:34px; height:1px; background:var(--a,#b0894f); opacity:.7"></span>
+    </div>
+    <div style="font-family:'Cormorant Garamond'; font-weight:500; font-size:34px; line-height:1.15; color:#2c2620">Half past four<br>in the afternoon</div>
+    <div style="font-family:'Cormorant Garamond'; font-style:italic; font-size:24px; margin-top:24px; color:var(--a,#b0894f)">Villa del Balbianello</div>
+    <div style="font-family:'Jost'; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#6b6157; margin-top:8px">Lenno &middot; Lake Como &middot; Italy</div>
+    <div style="font-size:15.5px; font-style:italic; color:#6b6157; margin-top:22px; line-height:1.55; max-width:250px; margin-left:auto; margin-right:auto">Reception &amp; dinner to follow beneath the loggia, dancing until the stars.</div>
+  </section>
+
+  <section style="box-sizing:border-box">
+    <div style="height:210px; position:relative; background:repeating-linear-gradient(45deg,#dfe3da,#dfe3da 11px,#e6e9e1 11px,#e6e9e1 22px); display:flex; align-items:center; justify-content:center">
+      <div style="width:26px; height:26px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:var(--a,#b0894f); box-shadow:0 6px 14px rgba(0,0,0,.18)"></div>
+      <div style="position:absolute; bottom:12px; font-family:'Jost'; font-size:8.5px; letter-spacing:.18em; text-transform:uppercase; color:#8b9184">interactive map</div>
+    </div>
+    <div style="padding:30px 36px 60px; text-align:center">
+      <div style="font-family:'Jost'; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#6b6157; line-height:1.7">Via Guido Comoedia 5<br>22016 Lenno CO, Italy</div>
+      <div style="display:inline-block; margin-top:20px; font-family:'Jost'; font-size:10px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--a,#b0894f); border:1px solid var(--a,#b0894f); padding:12px 26px; border-radius:999px; cursor:pointer">Get Directions</div>
+    </div>
+  </section>
+
+  <section style="padding:64px 36px; text-align:center; box-sizing:border-box; background:#efe7d9">
+    <div style="font-family:'Jost'; font-weight:500; font-size:10px; letter-spacing:.36em; text-transform:uppercase; color:var(--a,#b0894f)">Dress Code</div>
+    <div style="font-family:'Cormorant Garamond'; font-weight:500; font-size:38px; margin:12px 0 4px; color:#2c2620">Black Tie</div>
+    <div style="font-size:15px; font-style:italic; color:#6b6157; max-width:230px; margin:0 auto">Formal attire in a palette of dusk and gold</div>
+    <div style="display:flex; justify-content:center; gap:14px; margin-top:26px">
+      <span style="width:30px; height:30px; border-radius:50%; background:#f6f1e9; border:1px solid rgba(44,38,32,.18)"></span>
+      <span style="width:30px; height:30px; border-radius:50%; background:#6f7d6a"></span>
+      <span style="width:30px; height:30px; border-radius:50%; background:var(--a,#b0894f)"></span>
+      <span style="width:30px; height:30px; border-radius:50%; background:#3a3128"></span>
+      <span style="width:30px; height:30px; border-radius:50%; background:#7a5c56"></span>
+    </div>
+  </section>
+
+  <section style="padding:66px 34px 40px; text-align:center; box-sizing:border-box">
+    <div style="font-family:'Jost'; font-weight:500; font-size:10px; letter-spacing:.36em; text-transform:uppercase; color:var(--a,#b0894f)">Will you join us</div>
+    <div style="font-family:'Cormorant Garamond'; font-weight:500; font-size:32px; margin:12px 0 26px; color:#2c2620">Kindly RSVP</div>
+
+    <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
+      <div style="text-align:left; max-width:290px; margin:0 auto">
+        <label style="font-family:'Jost'; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#a89a84">Your Name</label>
+        <input value="{{ name }}" onChange="{{ setName }}" placeholder="First & last name" style="width:100%; box-sizing:border-box; border:none; border-bottom:1px solid rgba(44,38,32,.25); background:transparent; padding:9px 0; font-family:'EB Garamond',serif; font-size:17px; color:#2c2620; outline:none; margin-top:4px" />
+        <div style="display:flex; gap:10px; margin-top:26px">
+          <div onClick="{{ setYes }}" style="{{ yesStyle }}">Joyfully Accept</div>
+          <div onClick="{{ setNo }}" style="{{ noStyle }}">Regretfully Decline</div>
+        </div>
+        <sc-if value="{{ isYes }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:26px">
+            <span style="font-family:'Jost'; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#6b6157">Guests in your party</span>
+            <div style="display:flex; align-items:center; gap:16px">
+              <div onClick="{{ decG }}" style="width:32px; height:32px; border:1px solid rgba(44,38,32,.22); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#2c2620">&minus;</div>
+              <span style="font-family:'Cormorant Garamond'; font-size:24px; min-width:18px; text-align:center">{{ guests }}</span>
+              <div onClick="{{ incG }}" style="width:32px; height:32px; border:1px solid rgba(44,38,32,.22); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#2c2620">+</div>
+            </div>
+          </div>
+        </sc-if>
+        <div onClick="{{ submit }}" style="margin-top:30px; text-align:center; background:var(--a,#b0894f); color:#f6f1e9; font-family:'Jost'; font-size:11px; font-weight:500; letter-spacing:.24em; text-transform:uppercase; padding:15px 0; border-radius:999px; cursor:pointer">Send Response</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:20px 6px 6px">
+        <div style="width:56px; height:56px; margin:0 auto; border-radius:50%; border:1px solid var(--a,#b0894f); display:flex; align-items:center; justify-content:center; color:var(--a,#b0894f); animation:stHeart 2.4s ease-in-out infinite; font-size:24px">&#10084;</div>
+        <div style="font-family:'Cormorant Garamond'; font-size:28px; margin-top:20px; color:#2c2620">{{ thankTitle }}</div>
+        <div style="font-size:15.5px; font-style:italic; color:#6b6157; margin-top:12px; line-height:1.55; max-width:250px; margin-left:auto; margin-right:auto">{{ thankBody }}</div>
+      </div>
+    </sc-if>
+  </section>
+
+  <section style="padding:34px 34px 46px; text-align:center; box-sizing:border-box; border-top:1px solid rgba(44,38,32,.1)">
+    <div style="font-family:'Cormorant Garamond'; font-style:italic; font-size:30px; color:var(--a,#b0894f)">I &amp; J</div>
+    <div style="font-family:'Jost'; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:#a89a84; margin-top:10px">#IsabellaAndJames &middot; 17.10.26</div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:740},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#b0894f&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { now: Date.now(), attending: null, guests: 2, name: '', submitted: false };
+  componentDidMount(){ this.t = setInterval(()=>this.setState({now:Date.now()}),1000); }
+  componentWillUnmount(){ if(this.t) clearInterval(this.t); }
+  renderVals(){
+    const ac = this.props.accent || '#b0894f';
+    const target = new Date('2026-10-17T16:30:00').getTime();
+    let d = Math.max(0, target - this.state.now);
+    const days = Math.floor(d/86400000); d -= days*86400000;
+    const hours = Math.floor(d/3600000); d -= hours*3600000;
+    const mins = Math.floor(d/60000); d -= mins*60000;
+    const secs = Math.floor(d/1000);
+    const pad = n => String(n).padStart(2,'0');
+    const isYes = this.state.attending === 'yes';
+    const isNo = this.state.attending === 'no';
+    const pill = sel => ({ padding:'13px 4px', flex:'1', textAlign:'center', border:'1px solid '+(sel?ac:'rgba(44,38,32,.2)'), background: sel?ac:'transparent', color: sel?'#f6f1e9':'#2c2620', borderRadius:'999px', fontFamily:"'Jost'", fontWeight:'500', fontSize:'10.5px', letterSpacing:'.1em', textTransform:'uppercase', cursor:'pointer', transition:'.3s', lineHeight:'1.2' });
+    return {
+      accent: ac,
+      days, hours: pad(hours), mins: pad(mins), secs: pad(secs),
+      name: this.state.name, guests: this.state.guests,
+      isYes, isNo,
+      submitted: this.state.submitted, notSubmitted: !this.state.submitted,
+      yesStyle: pill(isYes), noStyle: pill(isNo),
+      setYes: () => this.setState({attending:'yes'}),
+      setNo: () => this.setState({attending:'no'}),
+      setName: e => this.setState({name: e.target.value}),
+      incG: () => this.setState(s => ({guests: Math.min(9, s.guests+1)})),
+      decG: () => this.setState(s => ({guests: Math.max(1, s.guests-1)})),
+      submit: () => this.setState(s => ({submitted:true, attending: s.attending || 'yes'})),
+      thankTitle: isNo ? 'You will be missed' : 'We can\u2019t wait to celebrate',
+      thankBody: isNo
+        ? 'Thank you for letting us know. We will be thinking of you on our special day.'
+        : 'Your response is received. Details and a full schedule will arrive by post closer to the day.',
+    };
+  }
+}
+</script>
+</body>
+</html>

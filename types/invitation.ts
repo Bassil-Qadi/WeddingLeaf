@@ -24,9 +24,13 @@ export type WeddingTheme = "classic" | "modern" | "opulent" | "romantic";
  * veil-and-golden-thread scroll the design was cut against; `card` is a single
  * formal panel; `album` is photo-led. `envelope`/`doors`/`veil` are the three
  * "royal" (الدعوة الملكية) layouts: one shared cover-reveal story, distinguished
- * only by how the cover opens (see `royal-template.tsx`). Chosen independently of
- * {@link WeddingTheme}, so any layout wears any palette. The dispatcher lives in
- * `invitation-experience.tsx`.
+ * only by how the cover opens (see `royal-template.tsx`). `gem` (الجوهرة) is the
+ * modern one — a pointer-parallax 3D stage with a spinning faceted crystal and
+ * glassmorphism panels (see `gem-template.tsx`). `aurelia` (الوهج الذهبي) is the
+ * kinetic one — a glowing portal cover that zooms and dissolves into an
+ * internally-scrolling cinematic story (see `aurelia-template.tsx`). Chosen
+ * independently of {@link WeddingTheme}, so any layout wears any palette. The
+ * dispatcher lives in `invitation-experience.tsx`.
  */
 export type WeddingTemplate =
   | "thread"
@@ -34,7 +38,9 @@ export type WeddingTemplate =
   | "album"
   | "envelope"
   | "doors"
-  | "veil";
+  | "veil"
+  | "gem"
+  | "aurelia";
 
 /** The three cover openings the royal layouts share, keyed by their template. */
 export type CoverTreatment = "envelope" | "doors" | "veil";

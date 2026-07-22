@@ -1,6 +1,8 @@
 import type { InvitationData } from "../types";
 import { AlbumTemplate } from "./album-template";
+import { AureliaTemplate } from "./aurelia-template";
 import { CardTemplate } from "./card-template";
+import { GemTemplate } from "./gem-template";
 import { RoyalTemplate } from "./royal-template";
 import { ThreadTemplate } from "./thread-template";
 
@@ -32,6 +34,12 @@ export function InvitationExperience({
       return (
         <RoyalTemplate invitation={invitation} treatment={invitation.template} />
       );
+    // The modern, 3D layout — a pointer-parallax stage with a spinning crystal.
+    case "gem":
+      return <GemTemplate invitation={invitation} />;
+    // The kinetic layout — a glowing portal that dissolves into a scroll-story.
+    case "aurelia":
+      return <AureliaTemplate invitation={invitation} />;
     case "thread":
     default:
       return <ThreadTemplate invitation={invitation} />;

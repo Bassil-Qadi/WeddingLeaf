@@ -11,6 +11,8 @@ export const TEMPLATE_LABELS: Record<WeddingTemplate, string> = {
   envelope: "الظرف الملكي",
   doors: "البوابة الملكية",
   veil: "الستار الملكي",
+  gem: "الجوهرة",
+  aurelia: "الوهج الذهبي",
 };
 
 /** A one-line hint under each option, so the choice reads without a preview. */
@@ -21,6 +23,8 @@ export const TEMPLATE_DESCRIPTIONS: Record<WeddingTemplate, string> = {
   envelope: "ظرف مختوم يُفتح بلمسة، ثم تنساب الدعوة",
   doors: "بوابتان ذهبيتان تنفرجان عن دعوتكم",
   veil: "ستارٌ يُرفع ليكشف الدعوة كاملة",
+  gem: "تجربة عصرية ثلاثية الأبعاد — جوهرة متلألئة وطبقات تتبع لمستكم",
+  aurelia: "بوابة متوهّجة تنفتح على قصة سينمائية متدفّقة بلمسة واحدة",
 };
 
 export const TEMPLATE_OPTIONS: { value: WeddingTemplate; label: string }[] =
@@ -35,7 +39,9 @@ export function normalizeTemplate(value: unknown): WeddingTemplate {
     value === "album" ||
     value === "envelope" ||
     value === "doors" ||
-    value === "veil"
+    value === "veil" ||
+    value === "gem" ||
+    value === "aurelia"
     ? value
     : "thread";
 }
