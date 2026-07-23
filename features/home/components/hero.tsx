@@ -6,7 +6,7 @@ import { ArrowLeft, Play, Sparkles } from "lucide-react";
 
 import { PageContainer } from "@/components/common/page-container";
 import { AuroraField, EASE, GoldText } from "./primitives";
-import { InvitationMockup } from "./invitation-mockup";
+import { InvitationReveal } from "./invitation-reveal";
 
 const container = {
   hidden: {},
@@ -108,7 +108,7 @@ export function Hero() {
             transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}
             className="relative"
           >
-            <InvitationMockup />
+            <InvitationReveal />
           </motion.div>
         </div>
       </PageContainer>
